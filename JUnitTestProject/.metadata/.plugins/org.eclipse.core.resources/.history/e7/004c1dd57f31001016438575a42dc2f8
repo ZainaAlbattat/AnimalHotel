@@ -1,0 +1,112 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); // Förhindrar vanlig formulärinlämning
+
+        // Serialisera formulärdata
+        var formData = $(this).serialize();
+
+        // Skicka AJAX-förfrågan
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                // Reset the form fields
+                $('#ownerPetForm')[0].reset();
+                
+                // Extract owner ID from response or use a placeholder
+                var ownerId, ownerName, petName;
+                
+                try {
+                    // Try to parse response as JSON
+                    var data = JSON.parse(response);
+                    ownerId = data.ownerId;
+                    ownerName = data.ownerName;
+                    petName = data.petName;
+                } catch (e) {
+                    // If not JSON, check if it's a redirect
+                    if (response.includes('<!DOCTYPE html>')) {
+                        // Redirect already handled by browser
+                        return;
+                    }
+                    
+                    // Otherwise, try to extract owner ID from URL parameters
+                    var urlParams = new URLSearchParams(window.location.search);
+                    ownerId = urlParams.get('ownerId') || 'ID-12345'; // Fallback
+                    ownerName = urlParams.get('ownerName') || 'Owner';
+                    petName = urlParams.get('petName') || 'Pet';
+                }
+                
+                // Show owner ID popup
+                showOwnerIdPopup(ownerId, ownerName, petName);
+            },
+            error: function(xhr, status, error) {
+                // Hantera AJAX-fel
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+                alert('An error occurred: ' + error);
+            }
+        });
+    });
+    
+    // Function to show owner ID popup
+    function showOwnerIdPopup(ownerId, ownerName, petName) {
+        // Create popup if it doesn't exist
+        if ($('#ownerIdPopup').length === 0) {
+            var popupHtml = 
+                '<div id="ownerIdPopup" class="owner-id-popup">' +
+                '  <div class="popup-content">' +
+                '    <span class="popup-close">&times;</span>' +
+                '    <h3 class="popup-title">Registration Successful!</h3>' +
+                '    <div class="owner-details">' +
+                '      <p class="popup-text">Thank you for registering with Paws and Relax!</p>' +
+                '      <p class="popup-text"><strong id="popup-owner-name"></strong> and <strong id="popup-pet-name"></strong> have been registered.</p>' +
+                '      <p class="popup-text">Your Owner ID is:</p>' +
+                '      <div class="owner-id-display" id="ownerIdDisplay"></div>' +
+                '      <p class="popup-text">Please save this ID for future reference.</p>' +
+                '    </div>' +
+                '    <button class="popup-button" id="closePopupBtn">Continue</button>' +
+                '  </div>' +
+                '</div>';
+            
+            $('body').append(popupHtml);
+            
+            // Add event listeners for closing the popup
+            $('.popup-close, #closePopupBtn').click(function() {
+                $('#ownerIdPopup').fadeOut(300);
+            });
+            
+            // Close popup when clicking outside of it
+            $('#ownerIdPopup').click(function(event) {
+                if (event.target === this) {
+                    $(this).fadeOut(300);
+                }
+            });
+        }
+        
+        // Set values in popup
+        $('#ownerIdDisplay').text(ownerId);
+        $('#popup-owner-name').text(ownerName);
+        $('#popup-pet-name').text(petName);
+        
+        // Show popup
+        $('#ownerIdPopup').fadeIn(300);
+    }
+    
+    // Check URL parameters for showing popup on page load
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'true' && urlParams.get('ownerId')) {
+        var ownerId = 'OWN-' + urlParams.get('ownerId');
+        var ownerName = urlParams.get('ownerName') || '';
+        var petName = urlParams.get('petName') || '';
+        
+        // Show popup with a slight delay for better UX
+        setTimeout(function() {
+            showOwnerIdPopup(ownerId, ownerName, petName);
+        }, 500);
+        
+        // Remove parameters from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});

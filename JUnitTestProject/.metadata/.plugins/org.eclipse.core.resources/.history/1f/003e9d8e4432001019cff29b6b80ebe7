@@ -1,0 +1,36 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); // Prevent normal form submission
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                if (response.startsWith('success:')) {
+                    // Extract the redirect URL from the response
+                    var redirectUrl = response.substring(8); // Skip 'success:'
+                    
+                    // Redirect to the success page
+                    window.location.href = redirectUrl;
+                } else if (response.includes('<!DOCTYPE html>')) {
+                    // Redirect logic for HTML response
+                    window.location.href = '/OwnerClientProject/test.jsp';
+                } else {
+                    // For other responses, log to console
+                    console.log('Success:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle AJAX errors
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+            }
+        });
+    });
+});

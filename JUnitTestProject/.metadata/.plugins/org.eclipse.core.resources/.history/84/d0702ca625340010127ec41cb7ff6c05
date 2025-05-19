@@ -1,0 +1,361 @@
+package org.ics.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import isproject.ejb.ics.Animal;
+import isproject.ejb.ics.Owner;
+import isproject.facade.ics.FacadeLocal;
+
+@WebServlet(urlPatterns = { "/TestServlet", "/LoginServlet", "/LogoutServlet", "/UpdateOwnerServlet",
+		"/UpdateAnimalServlet", "/AddAnimalServlet" })
+public class TestServlet extends HttpServlet {
+	@EJB
+	private FacadeLocal facade;
+	private static final long serialVersionUID = 1L;
+
+	public TestServlet() {
+		super();
+		System.out.println("TestServlet constructor called");
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String servletPath = request.getServletPath();
+
+		if (servletPath.equals("/TestServlet")) {
+			PrintWriter out = response.getWriter();
+			out.println("TestServlet-doGet");
+		} else if (servletPath.equals("/LoginServlet")) {
+			System.out.println("LoginServlet doGet method called"); // Debug log
+			response.getWriter().println("LoginServlet-doGet");
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String servletPath = request.getServletPath();
+
+		if (servletPath.equals("/TestServlet")) {
+			handleTestServletPost(request, response);
+		} else if (servletPath.equals("/LoginServlet")) {
+			handleLoginPost(request, response);
+		} else if (servletPath.equals("/LogoutServlet")) {
+			handleLogoutPost(request, response);
+		} else if (servletPath.equals("/UpdateOwnerServlet")) {
+			handleUpdateOwnerPost(request, response);
+		} else if (servletPath.equals("/UpdateAnimalServlet")) {
+			handleUpdateAnimalPost(request, response);
+		} else if (servletPath.equals("/AddAnimalServlet")) {
+			handleAddAnimalPost(request, response);
+		}
+	}
+
+	private void handleTestServletPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			String ownerFirstName = request.getParameter("ownerFirstName");
+			String ownerLastName = request.getParameter("ownerLastName");
+			String phone = request.getParameter("phone");
+			String email = request.getParameter("email");
+			String petName = request.getParameter("petName");
+			String species = request.getParameter("species");
+
+			Owner newOwner = new Owner();
+			newOwner.setOwnerFirstName(ownerFirstName);
+			newOwner.setOwnerLastName(ownerLastName);
+			newOwner.setPhone(phone);
+			newOwner.setEmail(email);
+
+			Owner savedOwner = facade.createOwner(newOwner);
+
+			if (savedOwner != null) {
+				int ownerId = savedOwner.getOwnerID();
+
+				Animal newAnimal = new Animal();
+				newAnimal.setAnimalName(petName);
+				newAnimal.setSpecies(species);
+				newAnimal.setOwnerID(ownerId);
+
+				Animal savedAnimal = facade.createAnimal(newAnimal);
+
+				if (savedAnimal != null) {
+					// Store the owner ID in the session
+					request.getSession().setAttribute("lastCreatedOwnerId", ownerId);
+
+					// For AJAX requests, return owner ID in the response
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success:" + request.getContextPath() + "/jsp/home.jsp|" + ownerId);
+					} else {
+						// For regular form submissions, redirect to home.jsp
+						response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to create animal");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to create owner");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	private void handleLoginPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("LoginServlet doPost method called"); // Debug log
+
+		try {
+			int ownerID = Integer.parseInt(request.getParameter("ownerID"));
+			String phone = request.getParameter("phone");
+
+			System.out.println("Attempting to log in with ownerID: " + ownerID); // Debug log
+
+			// Use your existing findByOwnerId method
+			Owner owner = facade.findByOwnerId(ownerID);
+
+			if (owner != null && phone.equals(owner.getPhone())) {
+				// Authentication successful
+				HttpSession session = request.getSession();
+				session.setAttribute("loggedInOwner", owner);
+				session.setAttribute("ownerID", owner.getOwnerID());
+
+				// Redirect to the owner dashboard
+				response.sendRedirect("jsp/ownerdashboard.jsp");
+			} else {
+				// Authentication failed - set error message and redirect back to login
+				request.setAttribute("errorMessage", "Invalid owner ID or phone number");
+				request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid owner ID format: " + e.getMessage()); // Debug log
+			// Handle case where ownerID is not a valid number
+			request.setAttribute("errorMessage", "Invalid owner ID format");
+			request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+		} catch (Exception e) {
+			System.out.println("Error in LoginServlet: " + e.getMessage()); // Debug log
+			e.printStackTrace();
+			request.setAttribute("errorMessage", "An error occurred while processing your request");
+			request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+		}
+	}
+
+	private void handleLogoutPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// Get the current session
+		HttpSession session = request.getSession(false);
+
+		if (session != null) {
+			// Invalidate the session
+			session.invalidate();
+		}
+
+		// Redirect to home page
+		response.sendRedirect("jsp/home.jsp");
+	}
+
+	// ADDED: New method for updating owner information
+	private void handleUpdateOwnerPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("UpdateOwnerServlet method called"); // Debug log
+
+		try {
+			// Get the current session
+			HttpSession session = request.getSession(false);
+
+			if (session == null || session.getAttribute("loggedInOwner") == null) {
+				// User not logged in, redirect to login page
+				response.sendRedirect("jsp/LogIn.jsp");
+				return;
+			}
+
+			// Get current owner from session
+			Owner currentOwner = (Owner) session.getAttribute("loggedInOwner");
+			int ownerID = currentOwner.getOwnerID();
+
+			// Get updated owner information from form
+			String ownerFirstName = request.getParameter("ownerFirstName");
+			String ownerLastName = request.getParameter("ownerLastName");
+			String phone = request.getParameter("phone");
+			String email = request.getParameter("email");
+
+			// Create updated owner object
+			Owner updatedOwner = facade.findByOwnerId(ownerID); // Get current owner from database
+
+			if (updatedOwner != null) {
+				// Update the fields with new values
+				updatedOwner.setOwnerFirstName(ownerFirstName);
+				updatedOwner.setOwnerLastName(ownerLastName);
+				updatedOwner.setPhone(phone);
+				updatedOwner.setEmail(email);
+
+				// Call the facade to update the owner
+				Owner savedOwner = facade.updateOwner(updatedOwner);
+
+				if (savedOwner != null) {
+					// Update the session with the updated owner
+					session.setAttribute("loggedInOwner", savedOwner);
+
+					// For AJAX requests, return success message
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success: Owner information updated successfully");
+					} else {
+						// For regular form submissions, redirect back to dashboard
+						response.sendRedirect("jsp/ownerdashboard.jsp?message=Owner information updated successfully");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to update owner information");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to find owner");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	// ADDED: New method for updating animal information
+	private void handleUpdateAnimalPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("UpdateAnimalServlet method called"); // Debug log
+
+		try {
+			// Get the current session
+			HttpSession session = request.getSession(false);
+
+			if (session == null || session.getAttribute("loggedInOwner") == null) {
+				// User not logged in, redirect to login page
+				response.sendRedirect("jsp/LogIn.jsp");
+				return;
+			}
+
+			// Get the animal ID from the request
+			int animalID = Integer.parseInt(request.getParameter("animalID"));
+
+			// Get the updated animal information
+			String animalName = request.getParameter("animalName");
+			String species = request.getParameter("species");
+
+			// Get the animal from the database
+			Animal animalToUpdate = facade.findByAnimalId(animalID);
+
+			if (animalToUpdate != null) {
+				// Update the fields with new values
+				animalToUpdate.setAnimalName(animalName);
+				animalToUpdate.setSpecies(species);
+
+				// Call the facade to update the animal
+				Animal updatedAnimal = facade.updateAnimal(animalToUpdate);
+
+				if (updatedAnimal != null) {
+					// For AJAX requests, return success message
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success: Animal information updated successfully");
+					} else {
+						// For regular form submissions, redirect back to dashboard
+						response.sendRedirect("jsp/ownerdashboard.jsp?message=Animal information updated successfully");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to update animal information");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to find animal");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid animal ID format: " + e.getMessage()); // Debug log
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("Invalid animal ID format");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	// ADDED: New method for adding a new animal to an existing owner
+	private void handleUpdateAnimalPost(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+	    System.out.println("UpdateAnimalServlet method called"); // Debug log
+
+	    try {
+	        // Get the current session
+	        HttpSession session = request.getSession(false);
+
+	        if (session == null || session.getAttribute("loggedInOwner") == null) {
+	            // User not logged in, redirect to login page
+	            response.sendRedirect("jsp/LogIn.jsp");
+	            return;
+	        }
+
+	        // Get the animal ID from the request
+	        int animalID = Integer.parseInt(request.getParameter("animalID"));
+
+	        // Get the updated animal information
+	        String animalName = request.getParameter("animalName");
+	        String species = request.getParameter("species");
+
+	        // Get the animal from the database
+	        Animal animalToUpdate = facade.findByAnimalId(animalID);
+
+	        if (animalToUpdate != null) {
+	            // Update the fields with new values
+	            animalToUpdate.setAnimalName(animalName);
+	            animalToUpdate.setSpecies(species);
+
+	            // Call the facade to update the animal
+	            Animal updatedAnimal = facade.updateAnimal(animalToUpdate);
+
+	            if (updatedAnimal != null) {
+	                // **ADD THIS: Refresh the owner data in the session**
+	                Owner currentOwner = (Owner) session.getAttribute("loggedInOwner");
+	                Owner refreshedOwner = facade.findByOwnerId(currentOwner.getOwnerID());
+	                session.setAttribute("loggedInOwner", refreshedOwner);
+
+	                // For AJAX requests, return success message
+	                if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+	                    response.setContentType("text/plain");
+	                    response.getWriter().write("success: Animal information updated successfully");
+	                } else {
+	                    // For regular form submissions, redirect back to dashboard
+	                    response.sendRedirect("jsp/ownerdashboard.jsp?message=Animal information updated successfully");
+	                }
+	            } else {
+	                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	                response.getWriter().write("Failed to update animal information");
+	            }
+	        } else {
+	            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	            response.getWriter().write("Failed to find animal");
+	        }
+	    } catch (NumberFormatException e) {
+	        System.out.println("Invalid animal ID format: " + e.getMessage()); // Debug log
+	        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	        response.getWriter().write("Invalid animal ID format");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        response.getWriter().write("An error occurred while processing your request");
+	    }
+	}
+}
+

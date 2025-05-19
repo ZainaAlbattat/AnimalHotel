@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Log in - Paws and Relax</title>
+<link rel="stylesheet" href="styles.css?v=2">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<header>
+<h1>Paws and Relax</h1>
+    <nav>
+        <ul>
+            <li><a href="home.jsp">Home</a></li>
+            <li><a href="about.jsp">About us</a></li>
+            <li><a href="test.jsp">Test</a></li>
+            <li><a href="LogIn.jsp">Log in</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <p style="margin-bottom: 100px;"> </p>
+    <h5>Log in with ID</h5>
+    <p style="margin-bottom: 30px;"> </p>
+    
+    <div class="form-container">
+        <% if (request.getAttribute("errorMessage") != null) { %>
+            <div style="color: red; text-align: center; margin-bottom: 20px;">
+                <%= request.getAttribute("errorMessage") %>
+            </div>
+        <% } %>
+        
+       <form id="loginForm" action="${pageContext.request.contextPath}/LoginServlet" method="post">
+            <label for="ownerID">Owner ID</label>
+            <input type="text" id="ownerID" name="ownerID" required><br><br>
+            
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone" required><br><br>
+            
+            <label for="email">Email (optional)</label>
+            <input type="email" id="email" name="email"><br><br>
+            
+            <button type="submit" id="submitBtn">Log In</button>
+            
+            <p style="color: white; text-align: center; margin-top: 20px;">
+                Don't have an account? <a href="home.jsp" style="color: #ffe7c1;">Sign up here</a>
+            </p>
+        </form>
+        <p style="margin-bottom: 100px;"> </p>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 Paws And Relax</p>
+</footer>
+</body>
+</html>

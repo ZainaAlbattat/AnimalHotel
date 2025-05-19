@@ -1,0 +1,18 @@
+package ics.ejb;
+
+import javax.ejb.Stateless;
+
+/**
+ * Session Bean implementation class Animal
+ */
+@Stateless
+public class Animal implements AnimalLocal {
+
+    /**
+     * Default constructor. 
+     */
+    public Animal() {
+        // TODO Auto-generated constructor stub
+    }
+
+}

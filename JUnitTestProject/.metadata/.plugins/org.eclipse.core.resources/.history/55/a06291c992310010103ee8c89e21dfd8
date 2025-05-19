@@ -1,0 +1,20 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); 
+        
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            data: $(this).serialize(),
+            success: function(response) {
+                // This should be the owner ID
+                alert("Registration successful! Your Owner ID is: " + response);
+                // Clear the form
+                $('#ownerPetForm')[0].reset();
+            },
+            error: function(xhr, status, error) {
+                alert("An error occurred: " + xhr.responseText);
+            }
+        });
+    });
+});

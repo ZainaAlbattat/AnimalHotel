@@ -1,0 +1,162 @@
+$(document).ready(function() {
+	initDashboard();
+
+	$('#ownerPetForm').submit(function(event) {
+		event.preventDefault(); // Prevent normal form submission
+
+		var formData = $(this).serialize();
+
+		// Get context path for proper URL construction
+		var contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+		if (contextPath === -1) contextPath = '';
+
+		$.ajax({
+			type: 'POST',
+			url: contextPath + '/TestServlet',
+			dataType: 'text',
+			data: formData,
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest' // Add this header
+			},
+			success: function(response) {
+				if (response.startsWith('success:')) {
+					// Parse the response
+					var parts = response.substring(8).split('|');
+					var redirectUrl = parts[0];
+					var ownerId = parts[1];
+
+					// Show alert with owner ID
+					alert('Registration successful! Your Owner ID is: ' + ownerId);
+
+					// Redirect to success page
+					window.location.href = redirectUrl;
+				} else {
+					console.log('Response:', response);
+				}
+			},
+			error: function(xhr, status, error) {
+				console.error('Error:', error);
+				alert('Error registering: ' + xhr.responseText);
+			}
+		});
+	});
+
+	// Set default tab
+	if (document.getElementsByClassName("tab-button").length > 0) {
+		document.getElementsByClassName("tab-button")[0].click();
+	}
+});
+
+function initDashboard() {
+	const petCards = document.querySelectorAll('.pet-card');
+	petCards.forEach(card => {
+		card.addEventListener('click', function(e) {
+			// Only trigger if the click wasn't on a button or form element
+			if (!e.target.closest('button') && !e.target.closest('form')) {
+				const animalId = this.getAttribute('data-animal-id');
+				viewPetDetails(animalId);
+			}
+		});
+	});
+
+	setupLogoutConfirmation();
+}
+
+/**
+ * View pet details - can be expanded to show more information or navigate to a pet details page
+ * @param {string} animalId - The ID of the animal to view
+ */
+function viewPetDetails(animalId) {
+	console.log(`Viewing details for pet ID: ${animalId}`);
+	// You can expand this to:
+	// 1. Fetch more details via AJAX
+	// 2. Show a modal with pet details
+	// 3. Navigate to a detailed pet page
+}
+
+/**
+ * Setup confirmation dialog for logout button
+ */
+function setupLogoutConfirmation() {
+	const logoutBtn = document.querySelector('.logout-btn');
+	if (logoutBtn) {
+		logoutBtn.addEventListener('click', function(event) {
+			if (!confirm('Are you sure you want to log out?')) {
+				event.preventDefault();
+			}
+		});
+	}
+}
+
+/**
+ * Helper function to display notifications to the user
+ * @param {string} message - The message to display
+ * @param {string} type - The type of message (success, error, info)
+ */
+function showNotification(message, type = 'info') {
+	// This is a placeholder for a notification system
+	// You could implement toast notifications or alerts
+	console.log(`${type.toUpperCase()}: ${message}`);
+	// Example implementation (uncomment and customize as needed):
+	/*
+	const notification = document.createElement('div');
+	notification.className = `notification ${type}`;
+	notification.textContent = message;
+    
+	document.body.appendChild(notification);
+    
+	// Auto-remove after 3 seconds
+	setTimeout(() => {
+		notification.remove();
+	}, 3000);
+	*/
+}
+
+/**
+ * Function to show edit form for a specific pet
+ * @param {number} animalId - The ID of the animal
+ * @param {string} animalName - The name of the animal
+ * @param {string} species - The species of the animal
+ */
+function showEditForm(animalId, animalName, species) {
+	const formId = `update-animal-form-${animalId}`;
+	const form = document.getElementById(formId);
+
+	if (form.style.display === "block") {
+		form.style.display = "none";
+	} else {
+		// Hide all other forms first
+		const allForms = document.querySelectorAll('.update-animal-form');
+		allForms.forEach(f => f.style.display = "none");
+
+		// Show the selected form
+		form.style.display = "block";
+
+		// Pre-fill the form fields
+		document.getElementById(`animalName-${animalId}`).value = animalName;
+		document.getElementById(`species-${animalId}`).value = species;
+	}
+}
+
+/**
+ * Function to handle tab switching
+ * @param {Event} evt - The event object
+ * @param {string} tabName - The ID of the tab to show
+ */
+function openTab(evt, tabName) {
+	// Hide all tab content
+	var tabContents = document.getElementsByClassName("tab-content");
+	for (var i = 0; i < tabContents.length; i++) {
+		tabContents[i].style.display = "none";
+	}
+
+	// Remove active class from all tab buttons
+	var tabButtons = document.getElementsByClassName("tab-button");
+	for (var i = 0; i < tabButtons.length; i++) {
+		tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+	}
+
+	// Show the current tab and add active class to the button
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
+}

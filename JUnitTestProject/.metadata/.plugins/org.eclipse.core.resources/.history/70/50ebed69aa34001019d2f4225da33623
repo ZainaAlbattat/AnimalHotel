@@ -1,0 +1,230 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ page import="isproject.ejb.ics.Owner"%>
+<%@ page import="isproject.ejb.ics.Animal"%>
+<%@ page import="java.util.Set"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Owner Dashboard</title>
+
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/css/styleOD.css">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
+</head>
+<body>
+	<header>
+		<img class="logo"
+			src="${pageContext.request.contextPath}/images/logo2.png" alt="Logo">
+		<h1>Paws and Relax</h1>
+		<nav>
+			<ul>
+				<li><a href="${pageContext.request.contextPath}/jsp/home.jsp">Home</a></li>
+				<li><a href="${pageContext.request.contextPath}/jsp/about.jsp">About
+						us</a></li>
+				<li><a href="${pageContext.request.contextPath}/jsp/LogIn.jsp">Log
+						in</a></li>
+				<li><a href="/RestServerAnimalProject/crud.jsp">Test</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<%
+		// Check if user is logged in
+		Owner loggedInOwner = (Owner) session.getAttribute("loggedInOwner");
+		if (loggedInOwner == null) {
+			// Redirect to login page if not logged in
+			response.sendRedirect("LogIn.jsp");
+		} else {
+		%>
+
+		<!-- Display message if there is one -->
+		<%
+		String message = request.getParameter("message");
+		if (message != null && !message.isEmpty()) {
+		%>
+		<div class="message"><%=message%></div>
+		<%
+		}
+		%>
+
+		<div class="dashboard-container">
+			<form action="${pageContext.request.contextPath}/LogoutServlet"
+				method="post" class="logout-form">
+				<button type="submit" class="logout-btn">Log Out</button>
+			</form>
+
+			<h2 class="welcome-message">
+				Welcome,
+				<%=loggedInOwner.getOwnerFirstName()%>
+				<%=loggedInOwner.getOwnerLastName()%>!
+			</h2>
+
+			<div class="owner-info">
+				<h3>Your Information</h3>
+				<div class="action-buttons">
+					<button type="button" class="toggle-form-btn"
+						onclick="toggleForm('update-owner-form')">Update
+						Information</button>
+				</div>
+
+				<!-- Update Owner Form (hidden by default) -->
+				<div id="update-owner-form" class="form-section"
+					style="display: none;">
+					<form
+						action="${pageContext.request.contextPath}/UpdateOwnerServlet"
+						method="post" class="remove-form">
+						<div class="form-group">
+							<label for="ownerFirstName">First Name:</label> <input
+								type="text" id="ownerFirstName" name="ownerFirstName"
+								value="<%=loggedInOwner.getOwnerFirstName()%>" required>
+						</div>
+						<div class="form-group">
+							<label for="ownerLastName">Last Name:</label> <input type="text"
+								id="ownerLastName" name="ownerLastName"
+								value="<%=loggedInOwner.getOwnerLastName()%>" required>
+						</div>
+						<div class="form-group">
+							<label for="phone">Phone:</label> <input type="tel" id="phone"
+								name="phone" value="<%=loggedInOwner.getPhone()%>" required>
+						</div>
+						<div class="form-group">
+							<label for="email">Email:</label> <input type="email" id="email"
+								name="email" value="<%=loggedInOwner.getEmail()%>" required>
+						</div>
+						<button type="submit" class="btn">Save Changes</button>
+						<button type="button" class="btn" style="background-color: #777;"
+							onclick="toggleForm('update-owner-form')">Cancel</button>
+					</form>
+				</div>
+
+				<p>
+					<span class="info-label">Owner ID:</span>
+					<%=loggedInOwner.getOwnerID()%></p>
+				<p>
+					<span class="info-label">First Name:</span>
+					<%=loggedInOwner.getOwnerFirstName()%></p>
+				<p>
+					<span class="info-label">Last Name:</span>
+					<%=loggedInOwner.getOwnerLastName()%></p>
+				<p>
+					<span class="info-label">Phone:</span>
+					<%=loggedInOwner.getPhone()%></p>
+				<p>
+					<span class="info-label">Email:</span>
+					<%=loggedInOwner.getEmail()%></p>
+			</div>
+
+			<div class="pet-info">
+				<h3 class="section-title">Your Pets</h3>
+				<div class="action-buttons">
+					<button type="button" class="toggle-form-btn"
+						onclick="toggleForm('add-pet-form')">Add New Pet</button>
+				</div>
+
+				<!-- Add New Pet Form (hidden by default) -->
+				<div id="add-pet-form" class="form-section" style="display: none;">
+					<form action="${pageContext.request.contextPath}/AddAnimalServlet"
+						method="post" class="remove-form">
+						<div class="form-group">
+							<label for="animalName">Pet Name:</label> <input type="text"
+								id="animalName" name="animalName" required>
+						</div>
+						<div class="form-group">
+							<label for="species">Species:</label> <input type="text"
+								id="species" name="species" required>
+						</div>
+						<button type="submit" class="btn">Add Pet</button>
+						<button type="button" class="btn" style="background-color: #777;"
+							onclick="toggleForm('add-pet-form')">Cancel</button>
+					</form>
+				</div>
+
+				<%
+				Set<Animal> animals = loggedInOwner.getAnimals();
+				if (animals != null && !animals.isEmpty()) {
+					for (Animal animal : animals) {
+				%>
+				<div class="pet-card" data-animal-id="<%=animal.getAnimalID()%>">
+					<p>
+						<span class="info-label">Name:</span>
+						<%=animal.getAnimalName()%></p>
+					<p>
+						<span class="info-label">ID:</span>
+						<%=animal.getAnimalID()%></p>
+					<p>
+						<span class="info-label">Species:</span>
+						<%=animal.getSpecies()%></p>
+
+					<!-- Edit Pet Button -->
+					<button class="edit-pet-btn"
+						onclick="showEditForm(<%=animal.getAnimalID()%>, '<%=animal.getAnimalName()%>', '<%=animal.getSpecies()%>')">
+						Edit Pet</button>
+
+					<!-- Update Animal Form (hidden by default) -->
+					<div id="update-animal-form-<%=animal.getAnimalID()%>"
+						class="update-animal-form" style="display: none;">
+						<form id="test"
+							action="${pageContext.request.contextPath}/UpdateAnimalServlet"
+							method="post">
+							<input type="hidden" name="animalID"
+								value="<%=animal.getAnimalID()%>">
+							<div class="form-group">
+								<label for="animalName-<%=animal.getAnimalID()%>">Pet
+									Name:</label> <input type="text"
+									id="animalName-<%=animal.getAnimalID()%>" name="animalName"
+									value="<%=animal.getAnimalName()%>" required>
+							</div>
+							<div class="form-group">
+								<label for="species-<%=animal.getAnimalID()%>">Species:</label>
+								<input type="text" id="species-<%=animal.getAnimalID()%>"
+									name="species" value="<%=animal.getSpecies()%>" required>
+							</div>
+							<button type="submit" class="btn">Update Pet</button>
+							<button type="button" class="btn" style="background-color: #777;"
+								onclick="showEditForm(<%=animal.getAnimalID()%>, '<%=animal.getAnimalName()%>', '<%=animal.getSpecies()%>')">Cancel</button>
+						</form>
+					</div>
+				</div>
+				<%
+				}
+				} else {
+				%>
+				<p>You don't have any pets registered yet.</p>
+				<%
+				}
+				%>
+			</div>
+		</div>
+		<%
+		}
+		%>
+	</main>
+	<footer>
+		<p>&copy; 2024 Paws And Relax</p>
+	</footer>
+
+	<script>
+    // visar form
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        if (form.style.display === "block") {
+            form.style.display = "none";
+        } else {
+            // If it's the add pet form, hide the update owner form first and vice versa
+            if (formId === 'add-pet-form') {
+                document.getElementById('update-owner-form').style.display = "none";
+            } else if (formId === 'update-owner-form') {
+                document.getElementById('add-pet-form').style.display = "none";
+            }
+            
+            // Show the selected form
+            form.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

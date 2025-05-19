@@ -1,0 +1,236 @@
+package org.ics.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import isproject.ejb.ics.Animal;
+import isproject.facade.ics.FacadeLocal;
+
+@WebServlet("/Animals/*")
+public class Animals extends HttpServlet {
+
+	@EJB
+	FacadeLocal facade;
+
+	private static final long serialVersionUID = 1L;
+
+	public Animals() {
+		super();
+	}
+
+	// Helper method to set CORS headers
+	private void setCorsHeaders(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+		response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Credentials", "false");
+	}
+
+	private void sendAsJson(HttpServletResponse response, Animal animal) throws IOException {
+		setCorsHeaders(response); // Ensure CORS headers are set
+		PrintWriter out = response.getWriter();
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
+		if (animal != null) {
+			JsonObjectBuilder obj = Json.createObjectBuilder();
+			obj.add("id", String.valueOf(animal.getAnimalID()));
+			obj.add("name", animal.getAnimalName());
+			obj.add("species", animal.getSpecies());
+			JsonObject json = obj.build();
+
+			System.out.println("Sending animal JSON: " + json); // Debug log
+			out.print(json);
+		} else {
+			System.out.println("Sending empty object for null animal"); // Debug log
+			out.print("{ }");
+		}
+		out.flush();
+	}
+
+	private void sendAsJson(HttpServletResponse response, List<Animal> allAnimals) throws IOException {
+		setCorsHeaders(response); // Ensure CORS headers are set
+		PrintWriter out = response.getWriter();
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+
+		if (allAnimals != null) {
+			JsonArrayBuilder array = Json.createArrayBuilder();
+			for (Animal a : allAnimals) {
+				JsonObjectBuilder obj = Json.createObjectBuilder();
+				obj.add("id", String.valueOf(a.getAnimalID()));
+				obj.add("name", a.getAnimalName());
+				obj.add("species", a.getSpecies());
+				array.add(obj);
+			}
+			JsonArray jsonArray = array.build();
+
+			System.out.println("Sending animals JSON array: " + jsonArray); // Debug log
+			out.print(jsonArray);
+		} else {
+			System.out.println("Sending empty array for null animal list"); // Debug log
+			out.print("[]");
+		}
+		out.flush();
+	}
+
+	// FIND - doGet metod
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		System.out.println("=== doGet called ===");
+		System.out.println("Method: " + request.getMethod());
+		System.out.println("Request URL: " + request.getRequestURL());
+		System.out.println("Path Info: " + request.getPathInfo());
+		System.out.println("Query String: " + request.getQueryString());
+		System.out.println("Origin: " + request.getHeader("Origin"));
+		System.out.println("User-Agent: " + request.getHeader("User-Agent"));
+
+		// Set CORS headers immediately
+		setCorsHeaders(response);
+
+		try {
+			String pathInfo = request.getPathInfo();
+
+			if (pathInfo == null || pathInfo.equals("/")) {
+				// Hämta alla djur
+				System.out.println("Hämtar alla djur");
+				List<Animal> allAnimals = facade.findAllAnimals();
+				System.out.println("Found " + (allAnimals != null ? allAnimals.size() : 0) + " animals");
+				sendAsJson(response, allAnimals);
+				return;
+			}
+
+			String[] splits = pathInfo.split("/");
+			if (splits.length != 2) {
+				System.out.println("Ogiltig URL: " + pathInfo + " - splits length: " + splits.length);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL format");
+				return;
+			}
+
+			String idStr = splits[1];
+			System.out.println("Trying to find animal with ID: " + idStr);
+
+			try {
+				int id = Integer.parseInt(idStr);
+				Animal animal = facade.findByAnimalId(id);
+
+				if (animal != null) {
+					System.out.println("Found animal: " + animal.getAnimalName());
+					sendAsJson(response, animal);
+				} else {
+					System.out.println("No animal found with ID: " + id);
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Animal not found");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Ogiltigt ID format: " + idStr);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID format: " + idStr);
+			}
+		} catch (Exception e) {
+			System.out.println("Unexpected error in doGet: " + e.getMessage());
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+		}
+	}
+
+	// DELETE - doDelete metod
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		System.out.println("=== doDelete called ===");
+		System.out.println("Method: " + request.getMethod());
+		System.out.println("Path Info: " + request.getPathInfo());
+		System.out.println("Origin: " + request.getHeader("Origin"));
+
+		// Set CORS headers immediately
+		setCorsHeaders(response);
+
+		try {
+			String pathInfo = request.getPathInfo();
+
+			if (pathInfo == null || pathInfo.equals("/")) {
+				System.out.println("DELETE requires an ID");
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID is required for deletion");
+				return;
+			}
+
+			String[] splits = pathInfo.split("/");
+			if (splits.length != 2) {
+				System.out.println("Invalid URL format for DELETE: " + pathInfo);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL format");
+				return;
+			}
+
+			String idStr = splits[1];
+			System.out.println("Attempting to delete animal with ID: " + idStr);
+
+			try {
+				int id = Integer.parseInt(idStr);
+
+				// First check if animal exists
+				Animal animal = facade.findByAnimalId(id);
+				if (animal == null) {
+					System.out.println("Animal not found for deletion: " + id);
+					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Animal not found");
+					return;
+				}
+
+				// Delete the animal
+				facade.deleteAnimal(id);
+				System.out.println("Successfully deleted animal with ID: " + id);
+
+				// Send success response
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				PrintWriter out = response.getWriter();
+				JsonObjectBuilder obj = Json.createObjectBuilder();
+				obj.add("message", "Animal deleted successfully");
+				obj.add("id", idStr);
+				JsonObject json = obj.build();
+				out.print(json);
+				out.flush();
+
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid ID format for DELETE: " + idStr);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID format: " + idStr);
+			}
+		} catch (Exception e) {
+			System.out.println("Unexpected error in doDelete: " + e.getMessage());
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"Error deleting animal: " + e.getMessage());
+		}
+	}
+
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		System.out.println("=== doOptions called (CORS preflight) ===");
+		System.out.println("Origin: " + request.getHeader("Origin"));
+		System.out.println("Access-Control-Request-Method: " + request.getHeader("Access-Control-Request-Method"));
+		System.out.println("Access-Control-Request-Headers: " + request.getHeader("Access-Control-Request-Headers"));
+
+		// Set comprehensive CORS headers
+		setCorsHeaders(response);
+
+		response.setStatus(HttpServletResponse.SC_OK);
+		System.out.println("OPTIONS request handled successfully");
+	}
+}

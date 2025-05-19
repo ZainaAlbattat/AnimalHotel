@@ -1,0 +1,68 @@
+package org.ics.servlet;
+
+import java.io.IOException;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import isproject.ejb.ics.Owner;
+import isproject.facade.ics.FacadeLocal;
+
+@WebServlet("/LoginServlet")
+public class LoginServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    
+    @EJB
+    private FacadeLocal facade;
+    
+    public LoginServlet() {
+        super();
+    }
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.getWriter().println("LoginServlet-doGet");
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Your login logic here
+    
+        
+        try {
+            int ownerID = Integer.parseInt(request.getParameter("ownerID"));
+            String phone = request.getParameter("phone");
+            
+            // Use your existing findByOwnerId method
+            Owner owner = facade.findByOwnerId(ownerID);
+            
+            if (owner != null && phone.equals(owner.getPhone())) {
+                // Authentication successful
+                HttpSession session = request.getSession();
+                session.setAttribute("loggedInOwner", owner);
+                session.setAttribute("ownerID", owner.getOwnerID());
+                
+                // Instead of returning a simple success message,
+                // redirect to the owner dashboard
+                response.sendRedirect("ownerdashboard.jsp");
+            } else {
+                // Authentication failed - set error message and redirect back to login
+                request.setAttribute("errorMessage", "Invalid owner ID or phone number");
+                request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+            }
+        } catch (NumberFormatException e) {
+            // Handle case where ownerID is not a valid number
+            request.setAttribute("errorMessage", "Invalid owner ID format");
+            request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "An error occurred while processing your request");
+            request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+        }
+    }
+}

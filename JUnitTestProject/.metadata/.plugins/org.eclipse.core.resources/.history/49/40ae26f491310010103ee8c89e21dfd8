@@ -1,0 +1,30 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); 
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                // Check if response is a number (owner ID)
+                if (!isNaN(response)) {
+                    alert("Registration successful! Your Owner ID is: " + response);
+                    $('#ownerPetForm')[0].reset(); // Clear the form
+                } else {
+                    console.log('Response:', response);
+                    alert("Registration completed.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    });
+});

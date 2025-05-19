@@ -1,0 +1,138 @@
+
+$(document).ready(function() {
+	initDashboard();
+
+	// hanterar owner och pet forms
+	$('#ownerPetForm').submit(function(event) {
+		event.preventDefault();
+
+		var formData = $(this).serialize();
+		var contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+		if (contextPath === -1) contextPath = '';
+
+		$.ajax({
+			type: 'POST',
+			url: contextPath + '/TestServlet',
+			dataType: 'text',
+			data: formData,
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			success: function(response) {
+				if (response.startsWith('success:')) {
+					var parts = response.substring(8).split('|');
+					var redirectUrl = parts[0];
+					var ownerId = parts[1];
+
+					alert('Registration successful! Your Owner ID is: ' + ownerId);
+					window.location.href = redirectUrl;
+				} else {
+					console.log('Response:', response);
+				}
+			},
+			error: function(xhr, status, error) {
+				console.error('Error:', error);
+				alert('Error registering: ' + xhr.responseText);
+			}
+		});
+	});
+
+	// default tab
+	if (document.getElementsByClassName("tab-button").length > 0) {
+		document.getElementsByClassName("tab-button")[0].click();
+	}
+});
+
+
+function initDashboard() {
+	// clicka olika pet knapaprna
+	const petCards = document.querySelectorAll('.pet-card');
+	petCards.forEach(card => {
+		card.addEventListener('click', function(e) {
+			if (!e.target.closest('button') && !e.target.closest('form')) {
+				const animalId = this.getAttribute('data-animal-id');
+				viewPetDetails(animalId);
+			}
+		});
+	});
+
+	setupLogoutConfirmation();
+}
+
+// visar pet detaljer
+function viewPetDetails(animalId) {
+	console.log(`Viewing details for pet ID: ${animalId}`);
+}
+
+// vill du logga ur meddelande
+function setupLogoutConfirmation() {
+	const logoutBtn = document.querySelector('.logout-btn');
+	if (logoutBtn) {
+		logoutBtn.addEventListener('click', function(event) {
+			if (!confirm('Are you sure you want to log out?')) {
+				event.preventDefault();
+			}
+		});
+	}
+}
+
+
+function showNotification(message, type = 'info') {
+	console.log(`${type.toUpperCase()}: ${message}`);
+}
+
+// visar och gömmer pet form
+function showEditForm(animalId, animalName, species) {
+	const formId = `update-animal-form-${animalId}`;
+	const form = document.getElementById(formId);
+
+	if (form.style.display === "block") {
+		form.style.display = "none";
+	} else {
+
+		const allForms = document.querySelectorAll('.update-animal-form');
+		allForms.forEach(f => f.style.display = "none");
+
+
+		form.style.display = "block";
+		document.getElementById(`animalName-${animalId}`).value = animalName;
+		document.getElementById(`species-${animalId}`).value = species;
+	}
+}
+
+// tabs
+function openTab(evt, tabName) {
+
+	var tabContents = document.getElementsByClassName("tab-content");
+	for (var i = 0; i < tabContents.length; i++) {
+		tabContents[i].style.display = "none";
+	}
+
+
+	var tabButtons = document.getElementsByClassName("tab-button");
+	for (var i = 0; i < tabButtons.length; i++) {
+		tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+	}
+
+
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
+}
+
+//form hantering vilka som visas 
+function toggleForm(formId) {
+	const form = document.getElementById(formId);
+	if (form.style.display === "block") {
+		form.style.display = "none";
+	} else {
+
+		if (formId === 'add-pet-form') {
+			document.getElementById('update-owner-form').style.display = "none";
+		} else if (formId === 'update-owner-form') {
+			document.getElementById('add-pet-form').style.display = "none";
+		}
+
+
+		form.style.display = "block";
+	}
+}

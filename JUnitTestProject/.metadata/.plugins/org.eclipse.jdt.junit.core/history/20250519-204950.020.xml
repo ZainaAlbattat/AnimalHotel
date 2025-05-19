@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="EmployeeTest" project="JUnitTestProject" tests="7" started="7" failures="1" errors="0" ignored="0">
+  <testsuite name="ics.course.java.test.EmployeeTest" time="0.04" displayname="EmployeeTest" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]">
+    <testcase name="testGetPhone" classname="ics.course.java.test.EmployeeTest" time="0.016" displayname="testGetPhone()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetPhone()]"/>
+    <testcase name="testGetAddress" classname="ics.course.java.test.EmployeeTest" time="0.005" displayname="testGetAddress()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetAddress()]"/>
+    <testcase name="testGetName" classname="ics.course.java.test.EmployeeTest" time="0.002" displayname="testGetName()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetName()]"/>
+    <testcase name="testSetAddress" classname="ics.course.java.test.EmployeeTest" time="0.001" displayname="testSetAddress()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetAddress()]"/>
+    <testcase name="testEquals" classname="ics.course.java.test.EmployeeTest" time="0.009" displayname="testEquals()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testEquals()]">
+      <failure>
+        <expected>ics.course.java.Employee@548e6d58</expected>
+        <actual>ics.course.java.Employee@623a8092</actual>
+        org.opentest4j.AssertionFailedError: expected: &lt;ics.course.java.Employee@548e6d58&gt; but was: &lt;ics.course.java.Employee@623a8092&gt;&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)&#13;
+	at org.junit.jupiter.api@5.11.4/org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)&#13;
+	at JUnitTestProject/ics.course.java.test.EmployeeTest.testEquals(EmployeeTest.java:83)&#13;
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+
+      </failure>
+    </testcase>
+    <testcase name="testSetName" classname="ics.course.java.test.EmployeeTest" time="0.001" displayname="testSetName()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetName()]"/>
+    <testcase name="testSetPhone" classname="ics.course.java.test.EmployeeTest" time="0.001" displayname="testSetPhone()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetPhone()]"/>
+  </testsuite>
+</testrun>

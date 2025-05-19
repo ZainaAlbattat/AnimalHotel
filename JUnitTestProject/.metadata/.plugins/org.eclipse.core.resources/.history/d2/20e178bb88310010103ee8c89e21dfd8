@@ -1,0 +1,77 @@
+$(document).ready(function() {
+    console.log("Document ready - form reset code initialized");
+    
+    // First, test if a simple button click can reset the form
+    // Add this button to your HTML: <button type="button" id="testResetBtn">Test Reset</button>
+    $(document).on('click', '#testResetBtn', function() {
+        console.log("Test reset button clicked");
+        $('#ownerPetForm input').val('');
+        console.log("Form should be cleared now");
+    });
+    
+    $('#ownerPetForm').submit(function(event) {
+        console.log("Form submitted");
+        event.preventDefault();
+        
+        var formData = $(this).serialize();
+        console.log("Form data serialized:", formData);
+        
+        // Store form values before submission for debugging
+        var fieldValues = {};
+        $('#ownerPetForm input').each(function() {
+            fieldValues[this.id] = $(this).val();
+        });
+        console.log("Form values before submission:", fieldValues);
+        
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                console.log("AJAX success response received");
+                
+                // Try multiple clearing methods
+                console.log("Attempting to clear form with method 1");
+                $('#ownerPetForm')[0].reset();
+                
+                console.log("Attempting to clear form with method 2");
+                $('#ownerPetForm input').each(function() {
+                    $(this).val('');
+                });
+                
+                console.log("Attempting to clear form with method 3");
+                document.getElementById('ownerPetForm').reset();
+                
+                console.log("Attempting to clear form with method 4");
+                $('#ownerFirstName, #ownerLastName, #phone, #email, #petName, #species').val('');
+                
+                // Check if form was cleared
+                var afterClearValues = {};
+                $('#ownerPetForm input').each(function() {
+                    afterClearValues[this.id] = $(this).val();
+                });
+                console.log("Form values after clearing attempts:", afterClearValues);
+                
+                if (response.includes('<!DOCTYPE html>')) {
+                    console.log("Redirect detected in response");
+                    // Don't redirect yet so we can see the console logs
+                    // window.location.href = '/OwnerClientProject/test.jsp';
+                } else {
+                    console.log("No redirect in response. Full response:", response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX error:", error);
+                console.error("Response Text:", xhr.responseText);
+            }
+        });
+        
+        // Try clearing outside of the AJAX call as well
+        console.log("Attempting to clear form outside of AJAX");
+        setTimeout(function() {
+            $('#ownerPetForm input').val('');
+            console.log("Form should be cleared now (outside AJAX)");
+        }, 500);
+    });
+});

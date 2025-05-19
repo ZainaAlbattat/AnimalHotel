@@ -1,0 +1,39 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault();
+        
+        var formData = $(this).serialize();
+        var formElement = this;
+
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                // Use setTimeout to ensure this runs after everything else
+                setTimeout(function() {
+                    // Clear all input fields
+                    $('#ownerFirstName').val('');
+                    $('#ownerLastName').val('');
+                    $('#phone').val('');
+                    $('#email').val('');
+                    $('#petName').val('');
+                    $('#species').val('');
+                    
+                    console.log('Form cleared!');
+                }, 100);
+                
+                if (response.includes('<!DOCTYPE html>')) {
+                    window.location.href = '/OwnerClientProject/test.jsp';
+                } else {
+                    console.log('Success:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+            }
+        });
+    });
+});

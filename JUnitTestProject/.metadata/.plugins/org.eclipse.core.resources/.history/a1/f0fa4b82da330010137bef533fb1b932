@@ -1,0 +1,266 @@
+.dashboard-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Owner and Pet Information Sections */
+.owner-info, .pet-info {
+    background-color: #ffe7c1;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.owner-info h3 {
+    text-align: left;
+    color: #066301;
+    margin: 0;
+    margin-left: 0;
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+/* Pet Cards */
+.pet-card {
+    background-color: #ffe7c1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    color: #066301;
+    margin-top: 0;
+   margin-left: 0px;
+    padding-bottom: 10px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #066301;
+}
+
+/* Logout Button */
+.logout-btn {
+    padding: 10px 20px;
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+}
+
+.logout-btn:hover {
+    background-color: #034b01;
+}
+
+/* Override the form styling for logout form */
+.logout-form {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: auto;
+    margin-left: 0;
+}
+
+/* Pet Name */
+.pet-name {
+    margin-top: 0;
+}
+
+/* Welcome Message */
+.welcome-message {
+    text-align: center;
+    color: #066301;
+    margin: 0 0 30px 0;
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+/* Logo Styles */
+.logo2 {
+    width: 300px;
+    height: auto;
+    margin-left: 40px;
+    margin-right: 40px;
+    display: inline-block;
+}
+
+.logo3 {
+    width: 300px !important;
+    height: auto !important;
+    margin-left: 40px;
+    display: inline-block;
+}
+
+/* Image Container for Multiple Images */
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.image-container img {
+    margin: 10px;
+    max-width: 300px;
+    height: auto;
+}
+
+/* Button styles consistent with site theme */
+.action-button {
+    background-color: #066301;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+}
+
+.action-button:hover {
+    background-color: #009300;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dashboard-container {
+        width: 95%;
+    }
+    
+    .logo2, .logo3 {
+        width: 200px !important;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    .welcome-message {
+        font-size: 28px;
+    }
+    
+    .owner-info h3 {
+        font-size: 24px;
+    }
+}
+.form-container {
+    background-color: transparent;
+    padding: 0;
+    margin-bottom: 15px;
+    box-shadow: none;
+}
+
+.form-title {
+    color: #066301;
+    margin: 0;
+    margin-bottom: 15px;
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.form-group input[type="text"], 
+.form-group input[type="email"], 
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #034b01;
+}
+
+#update-animal-form{
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+.edit-pet-btn {
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.edit-pet-btn:hover {
+    background-color: #034b01;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #d4edda;
+    color: #066301;
+    border: 1px solid #c3e6cb;
+    font-weight: bold;
+}
+
+/* Removed tabs as they're no longer needed */
+.action-buttons {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.toggle-form-btn {
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.toggle-form-btn:hover {
+    background-color: #034b01;
+}
+
+.form-section {
+    display: none;
+    margin-top: 15px;
+}
+.remove-form{
+	 display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 5px;
+
+	}

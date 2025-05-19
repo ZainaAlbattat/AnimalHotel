@@ -1,0 +1,163 @@
+
+$(document).ready(function() {
+	$.ajax({
+		method: "GET",
+		url: "http://api.ipstack.com/check?access_key=206778f1dc91319aa1efa332bc83b70f",
+		error: ajaxReturn_Error,
+		success: ajaxReturn_Success
+	});
+
+	function ajaxReturn_Success(result, status, xhr) {
+		ParseJsonFile(result);
+	}
+
+	function ajaxReturn_Error(result, status, xhr) {
+		console.log("Ajax-find animal " + status);
+	}
+	$("#FindBtn").click(function() {
+		var strId = $("#id").val();
+		if (strId != "") {
+			$.ajax({
+				method: "GET",
+				url: "http://localhost:8080/OwnerClientProject/Animals/" + strId,
+				error: ajaxFindReturnError,
+				success: ajaxFindReturnSuccess
+
+
+			}); //End ready function
+
+			function ajaxFindReturnSuccess(result, status, xhr) {
+				$("#id").val(result.id);
+				$("#name").val(result.name);
+				$("#species").val(result.species);
+			}
+
+			function ajaxFindReturnError(result, status, xhr) {
+				alert("Error Find");
+				console.log("Ajax-find animal: " + status);
+			}
+		}
+	});
+	$("#AddBtn").click(function() {
+		var strId = $("#id").val();
+		var strName = $("#name").val();
+		var strSpecies = $("#species").val();
+		var obj = { id: strId, name: strName, species: strSpecies };
+		var jsonString = JSON.stringify(obj);
+
+		if (strName != "" && strSpecies != "") {
+			$.ajax({
+				method: "POST",
+				url: "http://localhost:8080/OwnerClientProject/Animals/",
+				data: { name: strName, species: strSpecies },
+				error: ajaxAddReturnError,
+				success: ajaxAddReturnSuccess
+			});
+			function ajaxAddReturnSuccess(result, status, xhr) {
+				clearFields();
+				$("#name").attr("placeholder", "Animal added");
+			}
+
+			function ajaxAddReturnError(result, status, xhr) {
+				alert("Error Add");
+				console.log("Ajax-add animal: " + status);
+			}
+		}
+	});
+
+	$("#UpdateBtn").click(function() {
+		var strId = $("#id").val();
+		var strName = $("#name").val();
+		var strSpecies = $("#species").val();
+		var obj = { id: strId, name: strName, species: strSpecies };
+		var jsonString = JSON.stringify(obj);
+
+		if (strId != "") {
+			$.ajax({
+				method: "PUT",
+				url: "http://localhost:8080/OwnerClientProject/Animals/" + strId,
+				data: { name: strName, species: strSpecies },
+				error: ajaxUpdateReturnError,
+				success: ajaxUpdateReturnSuccess
+			});
+			function ajaxUpdateReturnSuccess(result, status, xhr) {
+				clearFields();
+				$("#name").attr("placeholder", "Animal updated");
+			}
+
+			function ajaxUpdateReturnError(result, status, xhr) {
+				alert("Error Update");
+				console.log("Ajax-update animal: " + status);
+			}
+		}
+	});
+
+	$("#DeleteBtn").click(function() {
+		var strId = $("#id").val();
+
+		if (strId != "") {
+			$.ajax({
+				method: "DELETE",
+				url: "http://localhost:8080/OwnerClientProject/Animals/" + strId,
+				error: ajaxDeleteReturnError,
+				success: ajaxDeleteReturnSuccess
+			});
+
+			function ajaxDeleteReturnSuccess(result, status, xhr) {
+				clearFields();
+				$("#name").attr("placeholder", "Animal deleted");
+			}
+
+			function ajaxDeleteReturnError(result, status, xhr) {
+				alert("Error Delete");
+				console.log("Ajax-delete animal: " + status);
+			}
+		}
+	});
+}); // End ready function
+
+
+
+
+function ParseJsonFile(result) {
+	var lat = result.latitude;
+	var long = result.longitude;
+	var city = result.city;
+	var ipNbr = result.ip;
+
+	$("#city").text(city);
+	$("#ipNbr").text(ipNbr);
+
+	$.ajax({
+		method: "GET",
+		url: "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + long + "&units=metric&appid=3c4377862e01bb960a247197e7388a9d",
+		error: ajaxWeatherReturn_Error,
+		success: ajaxWeatherReturn_Success
+	});
+
+	function ajaxWeatherReturn_Success(result, status, xhr) {
+		var sunrise = result.sys.sunrise;
+		var sunset = result.sys.sunset;
+		var sunriseDate = new Date(sunrise * 1000);
+		var timeStrSunrise = sunriseDate.toLocaleTimeString("sv-SE");
+		var sunsetDate = new Date(sunset * 1000);
+		var timeStrSunset = sunsetDate.toLocaleTimeString("sv-SE");
+
+		$("#sunrise").text("Sunrise: " + timeStrSunrise);
+		$("#sunset").text("Sunset: " + timeStrSunset);
+		$("#weather").text(result.weather[0].main);
+		$("#degree").text(result.main.temp + " \u2103");
+	} //ajaxWeatherReturn_Success
+
+	function ajaxWeatherReturn_Error(result, status, xhr) {
+		alert("Error i OpenWeaterMap Ajax");
+		console.log("Ajax weather error: " + status);
+	}
+}
+function clearFields() {
+	$("#id").val("");
+	$("#name").val("");
+	$("#species").val("");
+}
+
+

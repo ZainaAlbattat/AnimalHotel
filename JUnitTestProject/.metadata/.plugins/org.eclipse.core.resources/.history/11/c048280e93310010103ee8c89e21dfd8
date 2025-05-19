@@ -1,0 +1,51 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>About us</title>
+<link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+	<header>
+		<h1>About Us</h1>
+		<nav>
+			<ul>
+				<li><a href="home.jsp">Home</a></li>
+				<li><a href="about.jsp">About us</a></li>
+				<li><a href="test.jsp">Test</a></li>
+				<li><a href="LogIn.jsp">Log in</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main>
+		<section class="our-story">
+
+			<h2>Our Story</h2>
+			<p>Welcome to Paws & Relax</p>
+			<p>The perfect getaway for your beloved pets.</p>
+			<p>Our animal hotel is designed with comfort and care in mind,
+				offering:</p>
+			<section class="what-we-offer">
+				<ul>
+					<li>A safe and relaxing environment for all our furry guests</li>
+					<li>Exceptional service, ensuring your pets feel at home.</li>
+					<li>Pampering with love and attention.</li>
+				</ul>
+			</section>
+		</section>
+		<section class="our-mission">
+			<h2>Our Mission</h2>
+			<p>Our mission is to provide the highest level of care and
+				service to both our animal guests and their owners. We strive to
+				create a home away from home where pets can feel safe, loved, and
+				pampered. Our dedicated team is committed to making a positive
+				impact in the community by promoting animal well-being and
+				supporting responsible pet ownership. We believe in delivering
+				personalized care to ensure every pet has a comfortable and
+				stress-free experience.</p>
+		</section>
+	</main>
+</body>
+</html>

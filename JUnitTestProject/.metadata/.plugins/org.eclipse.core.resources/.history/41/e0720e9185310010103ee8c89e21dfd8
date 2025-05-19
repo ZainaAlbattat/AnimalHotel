@@ -1,0 +1,36 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Store form reference for later use
+        var form = this;
+        
+        // Serialize form data
+        var formData = $(form).serialize();
+
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'text',
+            data: formData,
+            success: function(response) {
+                // Manually clear all input fields
+                $(form).find('input[type="text"], input[type="email"]').val('');
+                
+                // If you expect an HTML redirect:
+                if (response.includes('<!DOCTYPE html>')) {
+                    window.location.href = '/OwnerClientProject/test.jsp';
+                } else {
+                    console.log('Success:', response);
+                    // Optional: Show success message
+                    alert('Form submitted successfully!');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+            }
+        });
+    });
+});

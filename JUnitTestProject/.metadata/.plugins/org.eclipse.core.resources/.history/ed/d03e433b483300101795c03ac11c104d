@@ -1,0 +1,218 @@
+
+.logout-form {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: auto;
+    margin-left: 0;
+}
+
+
+.welcome-message {
+    color: #066301;
+ 	margin: 0;
+    
+    margin-bottom: 30px;
+    
+}
+
+
+.dashboard-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.owner-info, .pet-info {
+    background-color: #ffe7c1;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.owner-info h3 {
+    text-align: left;
+    color: #066301;
+    margin: 0;
+    margin-left: 0; 
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 36px; 
+}
+
+.pet-card {
+    background-color: #ffe7c1;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    color: #066301;
+    margin-top: 0;
+    
+    padding-bottom: 10px;
+    text-align: left;
+  
+    margin: 0;
+    margin-left: 0; 
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 36px; 
+}
+
+.info-label {
+    font-weight: bold;
+    color: #066301;
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+}
+
+.logout-btn:hover {
+    background-color: #034b01;
+}
+
+.pet-name {
+    margin-top: 0;
+    text-align: left;
+	color: #066301;
+	margin: 0;
+	font-family: 'Tahoma', sans-serif;
+	font-weight: bold;
+	font-size: 30px;
+}
+
+
+
+
+.form-container {
+    background-color: #ffe7c1;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    color: #066301;
+    margin: 0;
+    margin-bottom: 15px;
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #066301;
+}
+
+.form-group input[type="text"], 
+.form-group input[type="email"], 
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #034b01;
+}
+
+.update-animal-form {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fff8ee;
+    border-radius: 5px;
+}
+
+.edit-pet-btn {
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.edit-pet-btn:hover {
+    background-color: #034b01;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    background-color: #d4edda;
+    color: #066301;
+    border: 1px solid #c3e6cb;
+    font-weight: bold;
+}
+
+/* Tabs for different forms */
+.tabs {
+    overflow: hidden;
+    border: 1px solid #066301;
+    background-color: #fff8ee;
+    border-radius: 5px 5px 0 0;
+    margin-top: 20px;
+}
+
+.tab-button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    transition: 0.3s;
+    color: #066301;
+    font-weight: bold;
+}
+
+.tab-button:hover {
+    background-color: #ffe7c1;
+}
+
+.tab-button.active {
+    background-color: #ffe7c1;
+    border-bottom: 3px solid #066301;
+}
+
+.tab-content {
+    display: none;
+    padding: 15px;
+    border: 1px solid #066301;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    background-color: #ffe7c1;
+}

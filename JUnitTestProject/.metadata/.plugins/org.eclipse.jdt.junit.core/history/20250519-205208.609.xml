@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="HourlyEmployeeTest" project="JUnitTestProject" tests="4" started="4" failures="0" errors="0" ignored="0">
+  <testsuite name="ics.course.java.test.HourlyEmployeeTest" time="0.045" displayname="HourlyEmployeeTest" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]">
+    <testcase name="testGetHours" classname="ics.course.java.test.HourlyEmployeeTest" time="0.037" displayname="testGetHours()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testGetHours()]"/>
+    <testcase name="testGetHourlySalary" classname="ics.course.java.test.HourlyEmployeeTest" time="0.004" displayname="testGetHourlySalary()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testGetHourlySalary()]"/>
+    <testcase name="testSetHourlySalary" classname="ics.course.java.test.HourlyEmployeeTest" time="0.001" displayname="testSetHourlySalary()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testSetHourlySalary()]"/>
+    <testcase name="testSetHours" classname="ics.course.java.test.HourlyEmployeeTest" time="0.001" displayname="testSetHours()" uniqueid="[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testSetHours()]"/>
+  </testsuite>
+</testrun>
