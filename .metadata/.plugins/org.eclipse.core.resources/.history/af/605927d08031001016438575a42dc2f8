@@ -1,0 +1,33 @@
+$(document).ready(function() {
+	$('#ownerPetForm').submit(function(event) {
+		event.preventDefault(); // Förhindrar vanlig formulärinlämning
+
+		// Serialisera formulärdata
+		var formData = $(this).serialize();
+
+		// Skicka AJAX-förfrågan
+		$.ajax({
+			type: 'POST',
+			url: '/OwnerClientProject/TestServlet',
+			dataType: 'text',
+		//	dataType: 'html', // Använd 'html' om du vill hantera en HTML-redirect, eller 'json' om du hanterar JSON-data.
+			data: formData,
+			success: function(response) {
+				// Om du förväntar dig en HTML-redirect kan du göra så här:
+				if (response.includes('<!DOCTYPE html>')) {
+					// Redirect logik om HTML returneras (detta gör att hela sidan byts)
+					window.location.href = '/OwnerClientProject/test.jsp'; // Redirecta till den sida du vill
+				} else {
+					// För JSON-svar, skriv ut i konsolen
+					console.log('Success:', response);
+				}
+			},
+			error: function(xhr, status, error) {
+				// Hantera AJAX-fel
+				console.error('AJAX error:', error);
+				console.error('Response Text:', xhr.responseText); // Ger dig full insyn i svaret'
+
+			}
+		});
+	});
+});

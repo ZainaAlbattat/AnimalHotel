@@ -1,0 +1,281 @@
+// Make functions globally accessible
+window.toggleForm = toggleForm;
+window.showEditForm = showEditForm;
+window.openTab = openTab;
+
+// Initialize when page loads
+$(document).ready(function() {
+	initDashboard();
+
+	// Handle owner/pet registration form
+	$('#ownerPetForm').submit(function(event) {
+		event.preventDefault();
+
+		var formData = $(this).serialize();
+
+		// Get context path for deployment
+		var contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+		if (contextPath === -1) contextPath = '';
+
+		// Send registration data to server
+		$.ajax({
+			type: 'POST',
+			url: contextPath + '/TestServlet',
+			dataType: 'text',
+			data: formData,
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			success: function(response) {
+				if (response.startsWith('success:')) {
+					// Parse response: "success:redirectUrl|ownerId"
+					var parts = response.substring(8).split('|');
+					var redirectUrl = parts[0];
+					var ownerId = parts[1];
+
+					// Show success message
+					alert('Registration successful! Your Owner ID is: ' + ownerId);
+
+					// Redirect to next page
+					window.location.href = redirectUrl;
+				} else {
+					console.log('Response:', response);
+				}
+			},
+			error: function(xhr, status, error) {
+				console.error('Error:', error);
+				alert('Error registering: ' + xhr.responseText);
+			}
+		});
+	});
+
+	// Set default tab as active
+	if (document.getElementsByClassName("tab-button").length > 0) {
+		document.getElementsByClassName("tab-button")[0].click();
+	}
+});
+
+// Set up dashboard interactions
+function initDashboard() {
+	// Make pet cards clickable
+	const petCards = document.querySelectorAll('.pet-card');
+	petCards.forEach(card => {
+		card.addEventListener('click', function(e) {
+			// Only trigger if not clicking on buttons/forms
+			if (!e.target.closest('button') && !e.target.closest('form')) {
+				const animalId = this.getAttribute('data-animal-id');
+				viewPetDetails(animalId);
+			}
+		});
+	});
+
+	// Set up logout confirmation
+	setupLogoutConfirmation();
+	
+	// Set up form submission handlers for pet updates
+	setupPetUpdateForms();
+}
+
+// View pet details
+function viewPetDetails(animalId) {
+	console.log(`Viewing details for pet ID: ${animalId}`);
+	// Can be expanded to show modal or navigate to details page
+}
+
+// Confirm before logout
+function setupLogoutConfirmation() {
+	const logoutBtn = document.querySelector('.logout-btn');
+	if (logoutBtn) {
+		logoutBtn.addEventListener('click', function(event) {
+			if (!confirm('Are you sure you want to log out?')) {
+				event.preventDefault();
+			}
+		});
+	}
+}
+
+// Show notifications to user
+function showNotification(message, type = 'info') {
+	// Currently just logs to console
+	console.log(`${type.toUpperCase()}: ${message}`);
+	
+	// Create and show a simple notification
+	const notification = document.createElement('div');
+	notification.className = `notification ${type}`;
+	notification.style.cssText = `
+		position: fixed;
+		top: 20px;
+		right: 20px;
+		padding: 15px 20px;
+		border-radius: 5px;
+		color: white;
+		font-weight: bold;
+		z-index: 1000;
+		transition: opacity 0.3s;
+	`;
+	
+	// Set background color based on type
+	switch(type) {
+		case 'success':
+			notification.style.backgroundColor = '#4CAF50';
+			break;
+		case 'error':
+			notification.style.backgroundColor = '#f44336';
+			break;
+		case 'info':
+		default:
+			notification.style.backgroundColor = '#2196F3';
+			break;
+	}
+	
+	notification.textContent = message;
+	document.body.appendChild(notification);
+	
+	// Auto-remove after 3 seconds
+	setTimeout(() => {
+		notification.style.opacity = '0';
+		setTimeout(() => {
+			if (notification.parentNode) {
+				notification.parentNode.removeChild(notification);
+			}
+		}, 300);
+	}, 3000);
+}
+
+// Update animal information
+function showEditForm(animalId, animalName, species) {
+	const formId = `update-animal-form-${animalId}`;
+	const form = document.getElementById(formId);
+
+	// Toggle form visibility
+	if (form.style.display === "block") {
+		form.style.display = "none";
+	} else {
+		// Hide all other edit forms first
+		const allForms = document.querySelectorAll('.update-animal-form');
+		allForms.forEach(f => f.style.display = "none");
+
+		// Show selected form
+		form.style.display = "block";
+
+		// Pre-fill with current data
+		document.getElementById(`animalName-${animalId}`).value = animalName;
+		document.getElementById(`species-${animalId}`).value = species;
+	}
+}
+
+// Toggle form visibility (for owner info and add pet forms)
+function toggleForm(formId) {
+	console.log('toggleForm called with:', formId); // Debug log
+	const form = document.getElementById(formId);
+	
+	if (!form) {
+		console.error('Form not found:', formId);
+		return;
+	}
+	
+	if (form.style.display === "block") {
+		form.style.display = "none";
+	} else {
+		// If it's the add pet form, hide the update owner form first and vice versa
+		if (formId === 'add-pet-form') {
+			const ownerForm = document.getElementById('update-owner-form');
+			if (ownerForm) ownerForm.style.display = "none";
+		} else if (formId === 'update-owner-form') {
+			const petForm = document.getElementById('add-pet-form');
+			if (petForm) petForm.style.display = "none";
+		}
+		
+		// Show the selected form
+		form.style.display = "block";
+	}
+}
+
+// Handle tab switching
+function openTab(evt, tabName) {
+	// Hide all tab content
+	var tabContents = document.getElementsByClassName("tab-content");
+	for (var i = 0; i < tabContents.length; i++) {
+		tabContents[i].style.display = "none";
+	}
+
+	// Remove active class from all buttons
+	var tabButtons = document.getElementsByClassName("tab-button");
+	for (var i = 0; i < tabButtons.length; i++) {
+		tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+	}
+
+	// Show selected tab and mark button as active
+	document.getElementById(tabName).style.display = "block";
+	evt.currentTarget.className += " active";
+}
+
+// Set up pet update forms to use AJAX
+function setupPetUpdateForms() {
+	const updateForms = document.querySelectorAll('form[action*="UpdateAnimalServlet"]');
+	
+	updateForms.forEach(form => {
+		form.addEventListener('submit', function(e) {
+			e.preventDefault();
+			
+			const formData = new FormData(this);
+			const animalId = formData.get('animalID');
+			
+			// Get context path
+			var contextPath = window.location.pathname.substring(0, window.location.pathname.indexOf('/', 1));
+			if (contextPath === -1) contextPath = '';
+			
+			// Send AJAX request
+			fetch(contextPath + '/UpdateAnimalServlet', {
+				method: 'POST',
+				body: formData
+			})
+			.then(response => response.text())
+			.then(data => {
+				if (data.includes('success') || data.includes('updated')) {
+					// Update the display with new values
+					const newName = formData.get('animalName');
+					const newSpecies = formData.get('species');
+					
+					// Update the pet card display
+					updatePetCardDisplay(animalId, newName, newSpecies);
+					
+					// Hide the form
+					document.getElementById(`update-animal-form-${animalId}`).style.display = 'none';
+					
+					// Show success message
+					showNotification('Pet updated successfully!', 'success');
+				} else {
+					showNotification('Error updating pet: ' + data, 'error');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				showNotification('Error updating pet', 'error');
+			});
+		});
+	});
+}
+
+// Update pet card display with new information
+function updatePetCardDisplay(animalId, newName, newSpecies) {
+	const petCard = document.querySelector(`[data-animal-id="${animalId}"]`);
+	if (petCard) {
+		// Find and update the name element
+		const paragraphs = petCard.querySelectorAll('p');
+		paragraphs.forEach(p => {
+			if (p.textContent.includes('Name:')) {
+				p.innerHTML = `<span class="info-label">Name:</span> ${newName}`;
+			}
+			if (p.textContent.includes('Species:')) {
+				p.innerHTML = `<span class="info-label">Species:</span> ${newSpecies}`;
+			}
+		});
+		
+		// Update the edit button onclick to use new values
+		const editButton = petCard.querySelector('.edit-pet-btn');
+		if (editButton) {
+			editButton.setAttribute('onclick', `showEditForm(${animalId}, '${newName}', '${newSpecies}')`);
+		}
+	}
+}

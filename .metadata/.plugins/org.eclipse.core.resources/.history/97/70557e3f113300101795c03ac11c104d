@@ -1,0 +1,85 @@
+
+.logout-form {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: auto;
+    margin-left: 0;
+}
+
+
+.welcome-message {
+    color: #066301;
+}
+
+
+.dashboard-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.owner-info, .pet-info {
+    background-color: #ffe7c1;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.owner-info h3 {
+    text-align: left;
+    color: #066301;
+    margin: 0;
+    margin-left: 0; 
+    font-family: 'Tahoma', sans-serif;
+    font-weight: bold;
+    font-size: 36px; 
+}
+
+.pet-card {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    color: #066301;
+    margin-top: 0;
+    border-bottom: 2px solid #066301;
+    padding-bottom: 10px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #066301;
+}
+
+.logout-btn {
+    padding: 10px 20px;
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+}
+
+.logout-btn:hover {
+    background-color: #034b01;
+}
+
+.pet-name {
+    margin-top: 0;
+    text-align: left;
+	color: #066301;
+	margin: 0;
+	margin-left: 10px;
+	font-family: 'Tahoma', sans-serif;
+	font-weight: bold;
+	font-size: 60px;
+}
+

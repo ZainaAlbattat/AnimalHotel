@@ -1,0 +1,102 @@
+$(document).ready(function() {
+    initDashboard();
+    
+	$('#ownerPetForm').submit(function(event) {
+	    event.preventDefault(); // Prevent normal form submission
+
+	    var formData = $(this).serialize();
+
+	    $.ajax({
+	        type: 'POST',
+	        url: '/OwnerClientProject/TestServlet',  // Update this with context path if needed
+	        dataType: 'text',
+	        data: formData,
+	        success: function(response) {
+	            if (response.startsWith('success:')) {
+	                var redirectUrl = response.substring(8); // Skip 'success:'
+	                
+	                // Extract owner ID from URL
+	                var ownerId = "";
+	                if (redirectUrl.includes('ownerId=')) {
+	                    ownerId = redirectUrl.split('ownerId=')[1].split('&')[0];
+	                    // Show alert with owner ID
+	                    alert('Registration successful! Your Owner ID is: ' + ownerId);
+	                }
+	                
+	                // Redirect to success page
+	                window.location.href = redirectUrl;
+	            } else if (response.includes('<!DOCTYPE html>')) {
+	                window.location.href = '/OwnerClientProject/test.jsp';
+	            } else {
+	                console.log('Success:', response);
+	            }
+	        },
+	        error: function(xhr, status, error) {
+	            console.error('AJAX error:', error);
+	            console.error('Response Text:', xhr.responseText);
+	        }
+	    });
+	});
+
+function initDashboard() {
+    const petCards = document.querySelectorAll('.pet-card');
+    petCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const animalId = this.getAttribute('data-animal-id');
+            viewPetDetails(animalId);
+        });
+    });
+    
+    setupLogoutConfirmation();
+}
+
+/**
+ * View pet details - can be expanded to show more information or navigate to a pet details page
+ * @param {string} animalId - The ID of the animal to view
+ */
+function viewPetDetails(animalId) {
+    console.log(`Viewing details for pet ID: ${animalId}`);
+    // You can expand this to:
+    // 1. Fetch more details via AJAX
+    // 2. Show a modal with pet details
+    // 3. Navigate to a detailed pet page
+}
+
+/**
+ * Setup confirmation dialog for logout button
+ */
+function setupLogoutConfirmation() {
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(event) {
+            if (!confirm('Are you sure you want to log out?')) {
+                event.preventDefault();
+            }
+        });
+    }
+}
+
+/**
+ * Helper function to display notifications to the user
+ * @param {string} message - The message to display
+ * @param {string} type - The type of message (success, error, info)
+ */
+function showNotification(message, type = 'info') {
+    // This is a placeholder for a notification system
+    // You could implement toast notifications or alerts
+    console.log(`${type.toUpperCase()}: ${message}`);
+    
+    // Example implementation (uncomment and customize as needed):
+    /*
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+    */
+}

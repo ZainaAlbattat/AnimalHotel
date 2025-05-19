@@ -1,0 +1,271 @@
+@charset "ISO-8859-1";
+
+/* Base styles - font family applied once */
+body {
+	font-family: 'Tahoma', sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #d9e5d6;
+}
+
+/* Headers - consolidated similar styles */
+h1 {
+	text-align: left;
+	color: #3e4a5a;
+	margin: 0;
+	font-weight: bold;
+	font-size: 25px;
+	margin-right: 380px;
+}
+
+h2, h4 {
+	text-align: left;
+	color: #3e4a5a;
+	margin: 0;
+	font-weight: bold;
+	font-size: 60px;
+}
+
+h2 {
+	margin-left: 50px;
+}
+
+h3 {
+	text-align: left;
+	color: #fea9c0;
+	margin: 0;
+	margin-left: 150px;
+	font-weight: bold;
+	font-size: 60px;
+}
+
+h4 {
+	margin-left: 300px;
+}
+
+h5 {
+	text-align: center;
+	color: #3e4a5a;
+	margin: 0;
+	font-weight: bold;
+	font-size: 30px;
+}
+
+/* Logo classes - simplified */
+.logo {
+	width: 50px;
+	height: auto;
+	margin-left: 90px;
+}
+
+.logo2 {
+	width: 300px;
+	height: auto;
+	margin-left: 580px;
+}
+
+.logo3 {
+	width: 400px;
+	height: auto;
+	margin: auto;
+	margin-left: 50px;
+}
+
+/* Main content */
+main {
+	background-color: #d9e5d6;
+	padding: 20px;
+}
+
+main p {
+	font-size: 20px;
+	color: #333;
+	margin-top: 20px;
+}
+
+/* Header */
+header {
+	background-color: #ccdbc8;
+	padding: 20px;
+	justify-content: space-between;
+	display: flex;
+	align-items: center;
+}
+
+/* Navigation */
+nav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	text-align: center;
+	font-weight: bold;
+}
+
+nav ul li {
+	margin-right: 100px;
+}
+
+nav ul li:last-child {
+	margin-right: 50px;
+}
+
+nav ul li a {
+	text-decoration: none;
+	color: #3e4a5a;
+	font-size: 20px;
+}
+
+/* Content sections - merged our-story and our-mission styles */
+.our-story p, .our-mission p {
+	font-size: 18px;
+	color: #333;
+	margin-left: 50px;
+	line-height: 1.5;
+}
+
+.our-story h2, .our-mission h2 {
+	font-size: 50px;
+	color: #3e4a5a;
+	margin-left: 50px;
+	line-height: 1.5;
+}
+
+.what-we-offer ul {
+	font-size: 18px;
+	color: #333;
+	margin-left: 50px;
+	line-height: 1.5;
+}
+
+/* Forms */
+form {
+	background-color: #3e4a5a;
+	padding: 50px;
+	border-radius: 120px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 40%;
+	margin-left: 370px;
+}
+
+label {
+	font-size: 18px;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+input[type="text"], input[type="email"] {
+	width: 60%;
+	padding: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	margin-left: 20px;
+	padding-left: 20px;
+}
+
+/* Buttons */
+button[type="submit"] {
+	padding: 10px 20px;
+	background-color: #617693;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button[type="submit"]:hover {
+	background-color: #717883;
+}
+
+.button {
+	display: inline-block;
+	background-color: #617693;
+	color: white;
+	padding: 10px 20px;
+	text-decoration: none;
+	border-radius: 5px;
+	font-weight: bold;
+}
+
+.button:hover {
+	background-color: #717883;
+}
+
+/* Messages */
+.success-message {
+	background-color: #e7ffe7;
+	color: #3e4a5a;
+	border: 2px solid #3e4a5a;
+	border-radius: 10px;
+	padding: 15px;
+	margin: 20px auto;
+	max-width: 400px;
+	font-size: 18px;
+}
+
+.error-message {
+	background-color: #ffe7e7;
+	color: #630101;
+	border: 2px solid #630101;
+	border-radius: 10px;
+	padding: 15px;
+	margin: 20px auto;
+	max-width: 400px;
+	font-size: 18px;
+}
+
+.owner-id {
+	font-weight: bold;
+	font-size: 22px;
+	color: #fea9c0;
+}
+
+/* Footer */
+footer {
+	background-color: #ccdbc8;
+	color: #000000;
+	text-align: center;
+	padding: 0, 5px 0;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+}
+
+/* Success container */
+.success-container {
+	background-color: #e7ffe7;
+	border: 2px solid #3e4a5a;
+	border-radius: 20px;
+	padding: 30px;
+	max-width: 600px;
+	margin: 50px auto;
+	text-align: center;
+}
+
+.success-container h2 {
+	color: #3e4a5a;
+	font-size: 28px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.owner-id-display {
+	background-color: #d9e5d6;
+	border: 2px dashed #3e4a5a;
+	border-radius: 10px;
+	padding: 20px;
+	margin: 20px 0;
+}
+
+.owner-id {
+	font-size: 30px;
+	font-weight: bold;
+	color: #fea9c0;
+	display: block;
+	margin: 10px 0;
+}
+
+.button-container {
+	margin-top: 30px;
+}

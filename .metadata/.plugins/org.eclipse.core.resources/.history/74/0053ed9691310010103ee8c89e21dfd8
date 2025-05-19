@@ -1,0 +1,53 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault();
+
+        // Show loading indicator
+        $('#submitBtn').prop('disabled', true).text('Submitting...');
+        
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'json',
+            data: formData,
+            success: function(response) {
+                // Re-enable button
+                $('#submitBtn').prop('disabled', false).text('Add Owner and Pet');
+                
+                if (response.status === 'success') {
+                    // Display success message with the owner ID
+                    $('#ownerIdDisplay').html('<div class="success-message">Registration successful! Your Owner ID is: <span class="owner-id">' + response.ownerId + '</span></div>');
+                    $('#ownerIdDisplay').show();
+                    
+                    // Clear the form
+                    $('#ownerPetForm')[0].reset();
+                } else {
+                    // Handle error messages
+                    $('#ownerIdDisplay').html('<div class="error-message">Error: ' + response.message + '</div>');
+                    $('#ownerIdDisplay').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                // Re-enable button
+                $('#submitBtn').prop('disabled', false).text('Add Owner and Pet');
+                
+                // Handle AJAX error
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+                
+                // Try to parse the error response
+                try {
+                    var errorResponse = JSON.parse(xhr.responseText);
+                    $('#ownerIdDisplay').html('<div class="error-message">Error: ' + errorResponse.message + '</div>');
+                } catch (e) {
+                    $('#ownerIdDisplay').html('<div class="error-message">An unexpected error occurred. Please try again.</div>');
+                }
+                $('#ownerIdDisplay').show();
+            }
+        });
+    });
+});

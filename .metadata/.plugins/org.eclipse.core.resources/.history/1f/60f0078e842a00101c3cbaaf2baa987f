@@ -1,0 +1,18 @@
+package ics.ejb;
+
+import javax.ejb.Stateless;
+
+/**
+ * Session Bean implementation class Owner
+ */
+@Stateless
+public class Owner implements OwnerLocal {
+
+    /**
+     * Default constructor. 
+     */
+    public Owner() {
+        // TODO Auto-generated constructor stub
+    }
+
+}

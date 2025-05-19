@@ -1,0 +1,43 @@
+$(document).ready(function() {
+    $('#ownerPetForm').submit(function(event) {
+        event.preventDefault(); // Prevent default form submission
+        
+        // Serialize form data
+        var formData = $(this).serialize();
+        
+        // Send AJAX request
+        $.ajax({
+            type: 'POST',
+            url: '/OwnerClientProject/TestServlet',
+            dataType: 'json', // Change to expect JSON response
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    // Show success message with owner ID
+                    var successMessage = $('<div class="success-message" style="color: #066301; text-align: center; margin-top: 20px; font-weight: bold;">' +
+                        'Registration successful! Your Owner ID is: ' + response.ownerId + '</div>');
+                    
+                    // Insert the message after the form
+                    $('.form-container').append(successMessage);
+                    
+                    // Clear all form fields
+                    $('#ownerPetForm')[0].reset();
+                    
+                    // Remove the success message after 10 seconds
+                    setTimeout(function() {
+                        successMessage.fadeOut('slow', function() {
+                            $(this).remove();
+                        });
+                    }, 10000);
+                } else {
+                    console.log('Form submission failed');
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle AJAX errors
+                console.error('AJAX error:', error);
+                console.error('Response Text:', xhr.responseText);
+            }
+        });
+    });
+});

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="AllTests" project="JUnitTestProject" tests="10" started="4" failures="0" errors="5" ignored="0">
+  <testsuite name="ics.course.java.test.AllTests" displayname="AllTests" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]">
+    <testsuite name="JUnit Jupiter" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]">
+      <testsuite name="ics.course.java.test.EmployeeTest" incomplete="true" displayname="EmployeeTest" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]">
+        <error>java.lang.reflect.InaccessibleObjectException: Unable to make static void ics.course.java.test.EmployeeTest.setUpBeforeClass() throws java.lang.Exception accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:203)&#13;
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:197)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	Suppressed: java.lang.reflect.InaccessibleObjectException: Unable to make static void ics.course.java.test.EmployeeTest.tearDownAfterClass() throws java.lang.Exception accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+		at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+		at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+		at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+		at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:203)&#13;
+		at java.base/java.lang.reflect.Method.setAccessible(Method.java:197)&#13;
+		at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+		at java.base/java.util.Collections$UnmodifiableCollection.forEach(Collections.java:1116)&#13;
+		... 1 more&#13;
+&#13;
+</error>
+        <testcase name="testGetPhone" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testGetPhone()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetPhone()]"/>
+        <testcase name="testGetAddress" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testGetAddress()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetAddress()]"/>
+        <testcase name="testGetName" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testGetName()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testGetName()]"/>
+        <testcase name="testSetAddress" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testSetAddress()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetAddress()]"/>
+        <testcase name="testSetName" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testSetName()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetName()]"/>
+        <testcase name="testSetPhone" classname="ics.course.java.test.EmployeeTest" incomplete="true" displayname="testSetPhone()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.EmployeeTest]/[method:testSetPhone()]"/>
+      </testsuite>
+      <testsuite name="ics.course.java.test.HourlyEmployeeTest" time="0.002" displayname="HourlyEmployeeTest" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]">
+        <testcase name="testGetHours" classname="ics.course.java.test.HourlyEmployeeTest" time="0.001" displayname="testGetHours()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testGetHours()]">
+          <error>java.lang.reflect.InaccessibleObjectException: Unable to make ics.course.java.test.HourlyEmployeeTest() accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+	at java.base/java.lang.reflect.Constructor.checkCanSetAccessible(Constructor.java:194)&#13;
+	at java.base/java.lang.reflect.Constructor.setAccessible(Constructor.java:187)&#13;
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+        <testcase name="testGetHourlySalary" classname="ics.course.java.test.HourlyEmployeeTest" time="0.0" displayname="testGetHourlySalary()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testGetHourlySalary()]">
+          <error>java.lang.reflect.InaccessibleObjectException: Unable to make ics.course.java.test.HourlyEmployeeTest() accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+	at java.base/java.lang.reflect.Constructor.checkCanSetAccessible(Constructor.java:194)&#13;
+	at java.base/java.lang.reflect.Constructor.setAccessible(Constructor.java:187)&#13;
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+        <testcase name="testSetHourlySalary" classname="ics.course.java.test.HourlyEmployeeTest" time="0.0" displayname="testSetHourlySalary()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testSetHourlySalary()]">
+          <error>java.lang.reflect.InaccessibleObjectException: Unable to make ics.course.java.test.HourlyEmployeeTest() accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+	at java.base/java.lang.reflect.Constructor.checkCanSetAccessible(Constructor.java:194)&#13;
+	at java.base/java.lang.reflect.Constructor.setAccessible(Constructor.java:187)&#13;
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+        <testcase name="testSetHours" classname="ics.course.java.test.HourlyEmployeeTest" time="0.001" displayname="testSetHours()" uniqueid="[engine:junit-platform-suite]/[suite:ics.course.java.test.AllTests]/[engine:junit-jupiter]/[class:ics.course.java.test.HourlyEmployeeTest]/[method:testSetHours()]">
+          <error>java.lang.reflect.InaccessibleObjectException: Unable to make ics.course.java.test.HourlyEmployeeTest() accessible: module JUnitTestProject does not "opens ics.course.java.test" to module org.junit.platform.commons&#13;
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)&#13;
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)&#13;
+	at java.base/java.lang.reflect.Constructor.checkCanSetAccessible(Constructor.java:194)&#13;
+	at java.base/java.lang.reflect.Constructor.setAccessible(Constructor.java:187)&#13;
+	at java.base/java.util.Optional.orElseGet(Optional.java:364)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)&#13;
+&#13;
+</error>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testrun>

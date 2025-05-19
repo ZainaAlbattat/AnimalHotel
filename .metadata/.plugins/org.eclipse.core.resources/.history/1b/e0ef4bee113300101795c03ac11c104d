@@ -1,0 +1,85 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="isproject.ejb.ics.Owner" %>
+<%@ page import="isproject.ejb.ics.Animal" %>
+<%@ page import="java.util.Set" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Owner Dashboard	</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/styleOD.css">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/script.js"></script>
+</head>
+<body>
+<header>
+<img class="logo" src="${pageContext.request.contextPath}/images/logo2.png" alt="Logo">
+    <h1>Paws and Relax</h1>
+    <nav>
+        <ul>
+            <li><a href="${pageContext.request.contextPath}jsp/home.jsp" >Home</a></li>
+            <li><a href="${pageContext.request.contextPath}jsp/about.jsp">About us</a></li>
+            <li><a href="${pageContext.request.contextPath}jsp/LogIn.jsp">Log in</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <%
+        // Check if user is logged in
+        Owner loggedInOwner = (Owner) session.getAttribute("loggedInOwner");
+        if (loggedInOwner == null) {
+            // Redirect to login page if not logged in
+            response.sendRedirect("LogIn.jsp");
+        } else {
+    %>
+    <div class="dashboard-container">
+		<form action="${pageContext.request.contextPath}/LogoutServlet" method="post" class="logout-form">
+    		<button type="submit" class="logout-btn">Log Out</button>
+		</form>
+       
+        <h2 class="welcome-message">Welcome, <%= loggedInOwner.getOwnerFirstName() %> <%= loggedInOwner.getOwnerLastName() %>!</h2>
+        
+        <div class="owner-info">
+            <h3>Owner Information</h3>
+            <p><span class="info-label">Owner ID:</span> <%= loggedInOwner.getOwnerID() %></p>
+            <p><span class="info-label">First Name:</span> <%= loggedInOwner.getOwnerFirstName() %></p>
+            <p><span class="info-label">Last Name:</span> <%= loggedInOwner.getOwnerLastName() %></p>
+            <p><span class="info-label">Phone:</span> <%= loggedInOwner.getPhone() %></p>
+            <p><span class="info-label">Email:</span> <%= loggedInOwner.getEmail() %></p>
+        </div>
+        
+        <div class="pet-info">
+            <h3 class="section-title">Your Pets</h3>
+            <%
+                Set<Animal> animals = loggedInOwner.getAnimals();
+                if (animals != null && !animals.isEmpty()) {
+                    for (Animal animal : animals) {
+            %>
+                <div class="pet-card" data-animal-id="<%= animal.getAnimalID() %>">
+                    
+                    <p><span class="info-label">Name:</span> <%= animal.getAnimalName() %></p>
+                    <p><span class="info-label">ID:</span> <%= animal.getAnimalID() %></p>
+                    <p><span class="info-label">Species:</span> <%= animal.getSpecies() %></p>
+                </div>
+            <%
+                    }
+                } else {
+            %>
+                <p>You don't have any pets registered yet.</p>
+            <%
+                }
+            %>
+        </div>
+    </div>
+    <%
+        }
+    %>
+</main>
+<footer>
+    <p>&copy; 2024 Paws And Relax</p>
+</footer>
+</body>
+</html>

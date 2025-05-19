@@ -1,0 +1,45 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Registration Success - Paws and Relax</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Paws and Relax</h1>
+        <nav>
+            <ul>
+                <li><a href="home.jsp">Home</a></li>
+                <li><a href="about.jsp">About us</a></li>
+                <li><a href="test.jsp">Test</a></li>
+                <li><a href="LogIn.jsp">Log in</a></li>
+                <li><a href="Success.jsp">Success</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div style="background-color: #e7ffe7; border: 2px solid #066301; border-radius: 20px; padding: 30px; max-width: 600px; margin: 50px auto; text-align: center; font-family: 'Tahoma', sans-serif;">
+            <h2 style="color: #066301; font-size: 28px; margin-bottom: 20px; text-align: center;">Registration Successful!</h2>
+            <p>Thank you for registering with Paws and Relax.</p>
+            
+            <% if(session.getAttribute("lastCreatedOwnerId") != null) { %>
+                <div style="background-color: #ffe7c1; border: 2px dashed #066301; border-radius: 10px; padding: 20px; margin: 20px 0;">
+                    <p>Your Owner ID is:</p>
+                    <span style="font-size: 30px; font-weight: bold; color: #fea9c0; display: block; margin: 10px 0;"><%= session.getAttribute("lastCreatedOwnerId") %></span>
+                    <p>Please make a note of this ID for future reference.</p>
+                </div>
+            <% } %>
+            
+            <div style="margin-top: 30px;">
+                <a href="home.jsp" style="display: inline-block; background-color: #066301; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Return to Home</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Paws And Relax</p>
+    </footer>
+</body>
+</html>
+</html>

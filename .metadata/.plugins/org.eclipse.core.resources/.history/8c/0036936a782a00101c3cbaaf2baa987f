@@ -1,0 +1,18 @@
+package ics.ejb.stateful;
+
+import javax.ejb.Stateless;
+
+/**
+ * Session Bean implementation class Employee
+ */
+@Stateless
+public class Employee implements EmployeeLocal {
+
+    /**
+     * Default constructor. 
+     */
+    public Employee() {
+        // TODO Auto-generated constructor stub
+    }
+
+}

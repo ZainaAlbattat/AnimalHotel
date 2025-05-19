@@ -1,0 +1,96 @@
+package org.ics.servlet;
+
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import isproject.ejb.ics.Animal;
+import isproject.ejb.ics.Owner;
+import isproject.facade.ics.FacadeLocal;
+
+
+
+@WebServlet("/TestServlet")
+public class TestServlet extends HttpServlet {
+
+	@EJB
+	private FacadeLocal facade;
+
+	private static final long serialVersionUID = 1L;
+
+	public TestServlet() {
+		super();
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		PrintWriter out = response.getWriter();
+		out.println("TestServlet-doGet");
+
+	
+}
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		
+	        try {
+	            String ownerFirstName = request.getParameter("ownerFirstName");
+	            String ownerLastName = request.getParameter("ownerLastName");
+	            String phone = request.getParameter("phone");
+	            String email = request.getParameter("email");
+	            String petName = request.getParameter("petName");
+	            String species = request.getParameter("species");
+
+	            Owner newOwner = new Owner();
+	            newOwner.setOwnerFirstName(ownerFirstName);
+	            newOwner.setOwnerLastName(ownerLastName);
+	            newOwner.setPhone(phone);
+	            newOwner.setEmail(email);
+
+	            Owner savedOwner = facade.createOwner(newOwner);
+
+	            if (savedOwner != null) {
+	                int ownerId = savedOwner.getOwnerID();
+
+	                Animal newAnimal = new Animal();
+	                newAnimal.setAnimalName(petName);
+	                newAnimal.setSpecies(species);
+	                newAnimal.setOwnerID(ownerId);
+
+	                Animal savedAnimal = facade.createAnimal(newAnimal);
+
+	                if (savedAnimal != null) {	 
+	                    response.setContentType("text/plain");
+	                    response.getWriter().write("success:" + ownerId);
+	                } else {
+	                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	                    response.getWriter().write("Failed to create animal");
+	                }
+	            } else {
+	                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	                response.getWriter().write("Failed to create owner");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	            response.getWriter().write("An error occurred while processing your request");
+	        }
+	    }
+}

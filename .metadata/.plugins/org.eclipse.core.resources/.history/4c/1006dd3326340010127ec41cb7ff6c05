@@ -1,0 +1,319 @@
+package org.ics.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import isproject.ejb.ics.Animal;
+import isproject.facade.ics.FacadeLocal;
+
+@WebServlet("/Animals/*")
+public class Animals extends HttpServlet {
+
+	@EJB
+	FacadeLocal facade;
+
+	private static final long serialVersionUID = 1L;
+
+	public Animals() {
+		super();
+	}
+
+	private void sendAsJson(HttpServletResponse response, Animal animal) throws IOException {
+		PrintWriter out = response.getWriter();
+		response.setContentType("application/json");
+
+		if (animal != null) {
+	        JsonObjectBuilder obj = Json.createObjectBuilder();
+	        obj.add("id", String.valueOf(animal.getAnimalID()));
+	        obj.add("name", animal.getAnimalName());
+	        obj.add("species", animal.getSpecies());
+	        JsonObject json = obj.build();
+	        out.print(json);
+		/*	out.print("{\"id\":");
+			out.print("\"" + animal.getAnimalID() + "\"");
+			out.print(",\"name\":");
+			out.print("\"" + animal.getAnimalName() + "\"");
+			out.print(",\"species\":");
+			out.print("\"" + animal.getSpecies() + "\"}");*/
+		} else {
+			out.print("{ }");
+		}
+		out.flush();
+
+	}
+
+	private void sendAsJson(HttpServletResponse response, List<Animal> allAnimals) throws IOException {
+
+		PrintWriter out = response.getWriter();
+		response.setContentType("application/json");
+
+		if (allAnimals != null) {
+			JsonArrayBuilder array = Json.createArrayBuilder();
+	        for (Animal a : allAnimals) {
+	            JsonObjectBuilder obj = Json.createObjectBuilder();
+	            obj.add("id", String.valueOf(a.getAnimalID()));
+	            obj.add("name", a.getAnimalName());
+	            obj.add("species", a.getSpecies());  // Add species here
+	            array.add(obj);
+	        }
+	        JsonArray jsonArray = array.build();
+	        out.print(jsonArray);
+		/*	JsonArrayBuilder array = Json.createArrayBuilder();
+			for (isproject.ejb.ics.Animal a : allAnimals) {
+				JsonObjectBuilder o = Json.createObjectBuilder();
+				o.add("id", String.valueOf(a.getAnimalID()));
+				o.add("name", a.getAnimalName());
+				array.add(o);
+			}
+			JsonArray jsonArray = array.build();
+			System.out.println("Animal Rest: " + jsonArray);
+			out.print(jsonArray);*/
+		} else {
+			out.print("[]");
+		}
+		out.flush();
+
+		/*
+		 * out.print("{\"title\":"); out.print("\"" + allAnimals.getAnimalID() + "\"");
+		 * out.print(",\"id\":"); out.print("\"" +allAnimals.getAnimalName()+"\"");
+		 * out.print(",\"price\":"); out.print("\"" +allAnimals.getSpecies()+"\"}"); }
+		 * else { out.print("{ }"); } out.flush();
+		 */
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// Tillåt CORS
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+		String pathInfo = request.getPathInfo();
+
+		if (pathInfo == null || pathInfo.equals("/")) {
+			System.out.println("Alla");
+			System.out.println(pathInfo);
+			List<animall> allAnimals = facade.findAllAnimals();
+			sendAsJson(response, allAnimals);
+			return;
+		}
+		String[] splits = pathInfo.split("/");
+		if (splits.length != 2) {
+			//System.out.println("Alla2");
+	        System.out.println("Ogiltig URL: " + pathInfo);
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
+		}
+		String idStr = splits[1];
+		try {
+	        int id = Integer.parseInt(idStr); // Försök att omvandla till heltal
+	        Animal animal = facade.findByAnimalId(id);
+	        if (animal != null) {
+	            sendAsJson(response, animal);
+	        } else {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Animal not found");
+	        }
+	    } catch (NumberFormatException e) {
+	        // Hantera ogiltigt ID-format
+	        System.out.println("Ogiltigt ID: " + idStr);
+	        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID format");
+	    
+	    }
+		//Animal animal = facade.findByAnimalId(Integer.parseInt(id));
+		//sendAsJson(response, animal);
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		//doGet(request, response);
+		
+		 // Tillåt CORS
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		System.out.println("doPost method called");
+		
+		try {
+	        // Hämta namnet och arten från förfrågan
+	        String name = request.getParameter("name");
+	        String species = request.getParameter("species");
+	        
+	        // Logga de mottagna värdena
+	        System.out.println("Received name: " + name);
+	        System.out.println("Received species: " + species);
+
+
+	        // Kontrollera att parametrarna inte är null eller tomma
+	        if (name == null || species == null || name.isEmpty() || species.isEmpty()) {
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name and species are required");
+	            return;
+	        }
+
+	        // Skapa ett nytt djur
+	        Animal newAnimal = new Animal();
+	        newAnimal.setAnimalName(name);
+	        newAnimal.setSpecies(species);
+
+	        // Lägg till djuret via facade
+	        facade.createAnimal(newAnimal);
+	       
+
+	        // Skriv ett framgångsmeddelande som JSON
+	        response.setContentType("application/json");
+	        PrintWriter out = response.getWriter();
+	        out.print("{\"message\":\"Animal added successfully!\"}");
+
+	        out.flush();
+
+	    } catch (Exception e) {
+	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error adding animal");
+	    }
+	}
+
+	/**
+	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doPut(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		// Lägg till CORS-rubriker
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	    
+		try {
+	        // Läs in djurets ID från URL:en
+	        String pathInfo = request.getPathInfo();
+	        if (pathInfo == null || pathInfo.equals("/")) {
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID is required for update");
+	            return;
+	        }
+
+	        String[] splits = pathInfo.split("/");
+	        if (splits.length != 2) {
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL");
+	            return;
+	        }
+
+	        int id = Integer.parseInt(splits[1]);
+
+	        // Hämta nya data från request
+	        String name = request.getParameter("name");
+	        String species = request.getParameter("species");
+
+	        // Kontrollera att alla parametrar är giltiga
+	        if (name == null || species == null || name.isEmpty() || species.isEmpty()) {
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Name and species are required");
+	            return;
+	        }
+	     // Hämta djuret och uppdatera det
+	        Animal animal = facade.findByAnimalId(id);
+	        if (animal == null) {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Animal not found");
+	            return;
+	        }
+
+	        animal.setAnimalName(name);
+	        animal.setSpecies(species);
+
+	        // Uppdatera djuret via facade
+	        facade.updateAnimal(animal);
+
+	        // Skicka tillbaka det uppdaterade djuret som JSON
+	        response.setContentType("application/json");
+	        PrintWriter out = response.getWriter();
+	        JsonObjectBuilder obj = Json.createObjectBuilder();
+	        obj.add("id", String.valueOf(animal.getAnimalID()));
+	        obj.add("name", animal.getAnimalName());
+	        obj.add("species", animal.getSpecies());
+	        JsonObject json = obj.build();
+	        out.print(json);
+	        out.flush();
+
+	    } catch (Exception e) {
+	        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error updating animal");
+	    }
+	}
+
+	/**
+	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		// Lägg till CORS-rubriker
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	    
+	    
+		String pathInfo = request.getPathInfo();
+		
+		if (pathInfo == null || pathInfo.equals("/")) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID is required for deletion" );
+			return;
+		}
+		String[] splits = pathInfo.split("/");
+		if (splits.length != 2) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid URL format");
+			return;
+		}
+		String id = splits[1];
+		
+	
+		Animal animal = facade.findByAnimalId(Integer.parseInt(id));
+		if (animal == null) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Animal not found");
+            return;
+		}
+		else 	 {		
+			facade.deleteAnimal(Integer.parseInt(id));
+			
+	        response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+	        JsonObjectBuilder obj = Json.createObjectBuilder();
+	        obj.add("message", "Animal deleted successfully");
+	        obj.add("id", id);
+	        JsonObject json = obj.build();
+	        out.print(json);
+	        out.flush();
+	//	sendAsJson(response, animal);
+	}
+	
+		}
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
+	    // Tillåt CORS
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	    response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+	    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+	    // Skicka tillbaka en tom respons med status 200 OK
+	    response.setStatus(HttpServletResponse.SC_OK);
+	}
+
+
+}
