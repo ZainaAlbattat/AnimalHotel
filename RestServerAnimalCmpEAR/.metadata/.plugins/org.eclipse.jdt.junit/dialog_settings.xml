@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="JUnitWizards">
+		<item key="NewTestCaseCreationWizardPage.USE_SETUP" value="true"/>
+		<item key="NewTestCaseCreationWizardPage.USE_TEARDOWN" value="true"/>
+		<item key="NewTestCaseCreationWizardPage.USE_SETUPCLASS" value="true"/>
+		<item key="NewTestCaseCreationWizardPage.USE_TEARDOWNCLASS" value="true"/>
+		<item key="NewTestCaseCreationWizardPage.USE_CONSTRUCTOR" value="false"/>
+		<item key="NewTestCaseCreationWizardPage2.USE_TASKMARKER" value="true"/>
+		<item key="NewTestCaseCreationWizardPage2.CREATE_FINAL_METHOD_STUBS" value="true"/>
+		<section name="NewTestCaseCreationWizard.dialogBounds">
+			<item key="DIALOG_X_ORIGIN" value="204"/>
+			<item key="DIALOG_Y_ORIGIN" value="109"/>
+			<item key="DIALOG_WIDTH" value="526"/>
+			<item key="DIALOG_HEIGHT" value="576"/>
+			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+		</section>
+		<section name="NewTestSuiteCreationWizard.dialogBounds">
+			<item key="DIALOG_X_ORIGIN" value="466"/>
+			<item key="DIALOG_Y_ORIGIN" value="136"/>
+			<item key="DIALOG_WIDTH" value="525"/>
+			<item key="DIALOG_HEIGHT" value="500"/>
+			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+		</section>
+	</section>
+</section>

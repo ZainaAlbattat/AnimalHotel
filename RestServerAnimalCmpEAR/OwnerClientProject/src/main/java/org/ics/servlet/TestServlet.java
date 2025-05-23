@@ -1,0 +1,341 @@
+package org.ics.servlet;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import isproject.ejb.ics.Animal;
+import isproject.ejb.ics.Owner;
+import isproject.facade.ics.FacadeLocal;
+
+@WebServlet(urlPatterns = { "/TestServlet", "/LoginServlet", "/LogoutServlet", "/UpdateOwnerServlet",
+		"/UpdateAnimalServlet", "/AddAnimalServlet" })
+public class TestServlet extends HttpServlet {
+	@EJB
+	private FacadeLocal facade;
+	private static final long serialVersionUID = 1L;
+
+	public TestServlet() {
+		super();
+		System.out.println("TestServlet constructor called");
+	}
+
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String servletPath = request.getServletPath();
+
+		if (servletPath.equals("/TestServlet")) {
+			PrintWriter out = response.getWriter();
+			out.println("TestServlet-doGet");
+		} else if (servletPath.equals("/LoginServlet")) {
+			System.out.println("LoginServlet doGet method called"); // Debug log
+			response.getWriter().println("LoginServlet-doGet");
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String servletPath = request.getServletPath();
+
+		if (servletPath.equals("/TestServlet")) {
+			handleTestServletPost(request, response);
+		} else if (servletPath.equals("/LoginServlet")) {
+			handleLoginPost(request, response);
+		} else if (servletPath.equals("/LogoutServlet")) {
+			handleLogoutPost(request, response);
+		} else if (servletPath.equals("/UpdateOwnerServlet")) {
+			handleUpdateOwnerPost(request, response);
+		} else if (servletPath.equals("/UpdateAnimalServlet")) {
+			handleUpdateAnimalPost(request, response);
+		} else if (servletPath.equals("/AddAnimalServlet")) {
+			handleAddAnimalPost(request, response);
+		}
+	}
+
+	private void handleTestServletPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			String ownerFirstName = request.getParameter("ownerFirstName");
+			String ownerLastName = request.getParameter("ownerLastName");
+			String phone = request.getParameter("phone");
+			String email = request.getParameter("email");
+			String petName = request.getParameter("petName");
+			String species = request.getParameter("species");
+
+			Owner newOwner = new Owner();
+			newOwner.setOwnerFirstName(ownerFirstName);
+			newOwner.setOwnerLastName(ownerLastName);
+			newOwner.setPhone(phone);
+			newOwner.setEmail(email);
+
+			Owner savedOwner = facade.createOwner(newOwner);
+
+			if (savedOwner != null) {
+				int ownerId = savedOwner.getOwnerID();
+
+				Animal newAnimal = new Animal();
+				newAnimal.setAnimalName(petName);
+				newAnimal.setSpecies(species);
+				newAnimal.setOwnerID(ownerId);
+
+				Animal savedAnimal = facade.createAnimal(newAnimal);
+
+				if (savedAnimal != null) {
+					// sparar ownerid
+					request.getSession().setAttribute("lastCreatedOwnerId", ownerId);
+
+					// returnerar ownerid
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success:" + request.getContextPath() + "/jsp/home.jsp|" + ownerId);
+					} else {
+						// skickar tbx till home
+						response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to create animal");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to create owner");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	private void handleLoginPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("LoginServlet doPost method called");
+
+		try {
+			int ownerID = Integer.parseInt(request.getParameter("ownerID"));
+			String phone = request.getParameter("phone");
+
+			System.out.println("Attempting to log in with ownerID: " + ownerID); //
+
+			// hittar owner
+			Owner owner = facade.findByOwnerId(ownerID);
+
+			if (owner != null && phone.equals(owner.getPhone())) {
+				// använder sig av phone och id för att logga in
+				HttpSession session = request.getSession();
+				session.setAttribute("loggedInOwner", owner);
+				session.setAttribute("ownerID", owner.getOwnerID());
+
+				// skicka till owner dashbboard
+				response.sendRedirect("jsp/ownerdashboard.jsp");
+			} else {
+
+				request.setAttribute("errorMessage", "Invalid owner ID or phone number");
+				request.getRequestDispatcher("/jsp/LogIn.jsp").forward(request, response);
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid owner ID format: " + e.getMessage());
+			// fel ownerid
+			request.setAttribute("errorMessage", "Invalid owner ID format");
+			request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+		} catch (Exception e) {
+			System.out.println("Error in LoginServlet: " + e.getMessage());
+			e.printStackTrace();
+			request.setAttribute("errorMessage", "An error occurred while processing your request");
+			request.getRequestDispatcher("LogIn.jsp").forward(request, response);
+		}
+	}
+
+//logga ut skickar dig till home
+	private void handleLogoutPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		HttpSession session = request.getSession(false);
+
+		if (session != null) {
+
+			session.invalidate();
+		}
+
+		response.sendRedirect("jsp/home.jsp");
+	}
+
+	// updatera owner info
+	private void handleUpdateOwnerPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("UpdateOwnerServlet method called"); // Debug log
+
+		try {
+
+			HttpSession session = request.getSession(false);
+
+			if (session == null || session.getAttribute("loggedInOwner") == null) {
+
+				response.sendRedirect("jsp/LogIn.jsp");
+				return;
+			}
+
+			// owner som du logga in med
+			Owner currentOwner = (Owner) session.getAttribute("loggedInOwner");
+			int ownerID = currentOwner.getOwnerID();
+
+			// den nya infon
+			String ownerFirstName = request.getParameter("ownerFirstName");
+			String ownerLastName = request.getParameter("ownerLastName");
+			String phone = request.getParameter("phone");
+			String email = request.getParameter("email");
+
+			Owner updatedOwner = facade.findByOwnerId(ownerID); // Get current owner from database
+
+			if (updatedOwner != null) {
+				// uppdatera i genom facade
+				updatedOwner.setOwnerFirstName(ownerFirstName);
+				updatedOwner.setOwnerLastName(ownerLastName);
+				updatedOwner.setPhone(phone);
+				updatedOwner.setEmail(email);
+
+				Owner savedOwner = facade.updateOwner(updatedOwner);
+
+				if (savedOwner != null) {
+					// uppdatera session
+					session.setAttribute("loggedInOwner", savedOwner);
+
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success: Owner information updated successfully");
+					} else {
+
+						response.sendRedirect("jsp/ownerdashboard.jsp?message=Owner information updated successfully");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to update owner information");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to find owner");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	// uppdatera animal
+	private void handleUpdateAnimalPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("UpdateAnimalServlet method called");
+
+		try {
+
+			HttpSession session = request.getSession(false);
+
+			if (session == null || session.getAttribute("loggedInOwner") == null) {
+
+				response.sendRedirect("jsp/LogIn.jsp");
+				return;
+			}
+
+			int animalID = Integer.parseInt(request.getParameter("animalID"));
+
+			String animalName = request.getParameter("animalName");
+			String species = request.getParameter("species");
+
+			// hämta djuret och uppdatera infon via facade
+			Animal animalToUpdate = facade.findByAnimalId(animalID);
+
+			if (animalToUpdate != null) {
+
+				animalToUpdate.setAnimalName(animalName);
+				animalToUpdate.setSpecies(species);
+
+				Animal updatedAnimal = facade.updateAnimal(animalToUpdate);
+
+				if (updatedAnimal != null) {
+
+					if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+						response.setContentType("text/plain");
+						response.getWriter().write("success: Animal information updated successfully");
+					} else {
+
+						response.sendRedirect("jsp/ownerdashboard.jsp?message=Animal information updated successfully");
+					}
+				} else {
+					response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					response.getWriter().write("Failed to update animal information");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to find animal");
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Invalid animal ID format: " + e.getMessage());
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			response.getWriter().write("Invalid animal ID format");
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+
+	// lägga till ett nytt djur
+	private void handleAddAnimalPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		System.out.println("AddAnimalServlet method called");
+
+		try {
+
+			HttpSession session = request.getSession(false);
+
+			if (session == null || session.getAttribute("loggedInOwner") == null) {
+
+				response.sendRedirect("jsp/LogIn.jsp");
+				return;
+			}
+
+			// använder sig av den inloggade ägaren
+			Owner currentOwner = (Owner) session.getAttribute("loggedInOwner");
+			int ownerID = currentOwner.getOwnerID();
+
+			String animalName = request.getParameter("animalName");
+			String species = request.getParameter("species");
+
+			// skapar ett nytt djur och kallar facade för att skapa
+			Animal newAnimal = new Animal();
+			newAnimal.setAnimalName(animalName);
+			newAnimal.setSpecies(species);
+			newAnimal.setOwnerID(ownerID);
+
+			Animal savedAnimal = facade.createAnimal(newAnimal);
+
+			if (savedAnimal != null) {
+				// uppdaterar för att ha med det nya djuret
+				Owner updatedOwner = facade.findByOwnerId(ownerID);
+				session.setAttribute("loggedInOwner", updatedOwner);
+
+				if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+					response.setContentType("text/plain");
+					response.getWriter().write("success: New animal added successfully");
+				} else {
+
+					response.sendRedirect("jsp/ownerdashboard.jsp?message=New animal added successfully");
+				}
+			} else {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.getWriter().write("Failed to add new animal");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().write("An error occurred while processing your request");
+		}
+	}
+}

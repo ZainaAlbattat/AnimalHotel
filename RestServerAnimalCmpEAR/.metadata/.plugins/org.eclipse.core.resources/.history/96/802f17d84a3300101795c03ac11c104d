@@ -1,0 +1,79 @@
+
+.logout-form {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    width: auto;
+    margin-left: 0;
+}
+/* Form styling */
+.form-section, 
+.update-animal-form {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+/* Remove tab styling completely */
+.tabs, 
+.tab-content, 
+.tab-button {
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Form container */
+.form-container {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Ensure form fields maintain proper styling */
+.form-group input[type="text"], 
+.form-group input[type="email"], 
+.form-group input[type="tel"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+}
+
+/* Form title styling */
+.form-title {
+    color: #066301;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Button styling */
+.toggle-form-btn, 
+.edit-pet-btn {
+    background-color: #066301;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+.toggle-form-btn:hover, 
+.edit-pet-btn:hover {
+    background-color: #034b01;
+}
+
+/* Action buttons container */
+.action-buttons {
+    margin: 10px 0;
+}

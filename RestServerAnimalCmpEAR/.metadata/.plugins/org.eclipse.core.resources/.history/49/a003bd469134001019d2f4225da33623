@@ -1,0 +1,205 @@
+$(document).ready(function() {
+    // IP och väder-delen (behåll denna)
+    $.ajax({
+        method: "GET",
+        url: "http://api.ipstack.com/check?access_key=206778f1dc91319aa1efa332bc83b70f",
+        error: ajaxReturn_Error,
+        success: ajaxReturn_Success
+    });
+
+    function ajaxReturn_Success(result, status, xhr) {
+        ParseJsonFile(result);
+    }
+
+    function ajaxReturn_Error(result, status, xhr) {
+        console.log("Ajax-weather error " + status);
+    }
+
+    // FIND ANIMAL - doGet with enhanced error handling
+    $("#FindBtn").click(function() {
+        var strId = $("#id").val();
+        console.log("Find button clicked, ID:", strId); // Debug log
+        
+        if (strId != "") {
+            $.ajax({
+                method: "GET",
+                url: "http://localhost:8080/OwnerClientProject/Animals/" + strId,
+                crossDomain: true,
+                dataType: "json",
+                timeout: 10000, // 10 second timeout
+                beforeSend: function(xhr) {
+                    console.log("Sending request to:", "http://localhost:8080/OwnerClientProject/Animals/" + strId);
+                },
+                error: function(xhr, status, error) {
+                    console.log("=== FIND ERROR DETAILS ===");
+                    console.log("Status:", xhr.status);
+                    console.log("Status Text:", xhr.statusText);
+                    console.log("Response Text:", xhr.responseText);
+                    console.log("Error:", error);
+                    console.log("Ready State:", xhr.readyState);
+                    
+                    if (xhr.status === 0) {
+                        alert("Network error - check if server is running and CORS is enabled");
+                    } else if (xhr.status === 404) {
+                        alert("Animal not found (404)");
+                    } else if (xhr.status === 500) {
+                        alert("Server error (500) - check server logs");
+                    } else {
+                        alert("Find Error: " + xhr.status + " - " + xhr.statusText);
+                    }
+                },
+                success: function(result, status, xhr) {
+                    console.log("=== FIND SUCCESS ===");
+                    console.log("Result:", result);
+                    console.log("Status:", status);
+                    
+                    if (result && result.id) {
+                        $("#id").val(result.id);
+                        $("#name").val(result.name);
+                        $("#species").val(result.species);
+                        
+                        // Also update the info section
+                        $("#animal-id").text(result.id);
+                        $("#animal-name").text(result.name);
+                        $("#animal-species").text(result.species);
+                    } else {
+                        console.log("Invalid result format:", result);
+                        alert("Received invalid data format");
+                    }
+                }
+            });
+        } else {
+            alert("Please enter an animal ID");
+        }
+    });
+
+    // DELETE ANIMAL - doDelete with enhanced error handling
+    $("#DeleteBtn").click(function() {
+        var strId = $("#id").val();
+        console.log("Delete button clicked, ID:", strId); // Debug log
+
+        if (strId != "") {
+            // Confirm before deleting
+            if (confirm("Are you sure you want to delete animal with ID " + strId + "?")) {
+                $.ajax({
+                    method: "DELETE",
+                    url: "http://localhost:8080/OwnerClientProject/Animals/" + strId,
+                    crossDomain: true,
+                    timeout: 10000, // 10 second timeout
+                    beforeSend: function(xhr) {
+                        console.log("Sending DELETE request to:", "http://localhost:8080/OwnerClientProject/Animals/" + strId);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("=== DELETE ERROR DETAILS ===");
+                        console.log("Status:", xhr.status);
+                        console.log("Status Text:", xhr.statusText);
+                        console.log("Response Text:", xhr.responseText);
+                        console.log("Error:", error);
+                        console.log("Ready State:", xhr.readyState);
+                        
+                        if (xhr.status === 0) {
+                            alert("Network error - check if server is running and CORS is enabled");
+                        } else if (xhr.status === 404) {
+                            alert("Animal not found (404)");
+                        } else if (xhr.status === 500) {
+                            alert("Server error (500) - check server logs");
+                        } else {
+                            alert("Delete Error: " + xhr.status + " - " + xhr.statusText);
+                        }
+                    },
+                    success: function(result, status, xhr) {
+                        console.log("=== DELETE SUCCESS ===");
+                        console.log("Result:", result);
+                        console.log("Status:", status);
+                        
+                        clearFields();
+                        $("#name").attr("placeholder", "Animal deleted successfully");
+                        
+                        // Clear the info section
+                        $("#animal-id").text("");
+                        $("#animal-name").text("");
+                        $("#animal-species").text("");
+                        
+                        alert("Animal deleted successfully!");
+                    }
+                });
+            }
+        } else {
+            alert("Please enter an animal ID to delete");
+        }
+    });
+
+    // TEST ALL ANIMALS button (for debugging)
+    if ($("#TestAllBtn").length === 0) {
+        // Add a test button if it doesn't exist
+        $("#DeleteBtn").after('<input type="button" name="testBtn" value="Test All" id="TestAllBtn">');
+    }
+    
+    $("#TestAllBtn").click(function() {
+        console.log("Testing connection to get all animals...");
+        $.ajax({
+            method: "GET",
+            url: "http://localhost:8080/OwnerClientProject/Animals/",
+            crossDomain: true,
+            timeout: 10000,
+            beforeSend: function(xhr) {
+                console.log("Sending GET ALL request to:", "http://localhost:8080/OwnerClientProject/Animals/");
+            },
+            error: function(xhr, status, error) {
+                console.log("=== GET ALL ERROR ===");
+                console.log("Status:", xhr.status);
+                console.log("Response:", xhr.responseText);
+                alert("Test failed: " + xhr.status + " - " + xhr.statusText);
+            },
+            success: function(result, status, xhr) {
+                console.log("=== GET ALL SUCCESS ===");
+                console.log("Result:", result);
+                alert("Test successful! Found " + (Array.isArray(result) ? result.length : "some") + " animals");
+            }
+        });
+    });
+
+}); // End ready function
+
+// Väder-funktioner (behåll dessa)
+function ParseJsonFile(result) {
+    var lat = result.latitude;
+    var long = result.longitude;
+    var city = result.city;
+    var ipNbr = result.ip;
+
+    $("#city").text(city);
+    $("#ipNbr").text(ipNbr);
+
+    $.ajax({
+        method: "GET",
+        url: "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + long + "&units=metric&appid=3c4377862e01bb960a247197e7388a9d",
+        error: ajaxWeatherReturn_Error,
+        success: ajaxWeatherReturn_Success
+    });
+
+    function ajaxWeatherReturn_Success(result, status, xhr) {
+        var sunrise = result.sys.sunrise;
+        var sunset = result.sys.sunset;
+        var sunriseDate = new Date(sunrise * 1000);
+        var timeStrSunrise = sunriseDate.toLocaleTimeString("sv-SE");
+        var sunsetDate = new Date(sunset * 1000);
+        var timeStrSunset = sunsetDate.toLocaleTimeString("sv-SE");
+
+        $("#sunrise").text("Sunrise: " + timeStrSunrise);
+        $("#sunset").text("Sunset: " + timeStrSunset);
+        $("#weather").text(result.weather[0].main);
+        $("#degree").text(result.main.temp + " \u2103");
+    }
+
+    function ajaxWeatherReturn_Error(result, status, xhr) {
+        alert("Error i OpenWeaterMap Ajax");
+        console.log("Ajax weather error: " + status);
+    }
+}
+
+function clearFields() {
+    $("#id").val("");
+    $("#name").val("");
+    $("#species").val("");
+}

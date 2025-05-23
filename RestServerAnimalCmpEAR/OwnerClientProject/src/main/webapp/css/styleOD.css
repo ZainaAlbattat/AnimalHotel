@@ -1,0 +1,298 @@
+@charset "ISO-8859-1";
+
+body {
+	font-family: 'Tahoma', sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #fafaef;
+}
+
+h1 {
+	text-align: left;
+	color: #3e4a5a;
+	margin: 0;
+	font-weight: bold;
+	font-size: 25px;
+	margin-right: 380px;
+}
+
+h2 {
+	text-align: left;
+	color: #3e4a5a;
+	margin: 0;
+	margin-left: 50px;
+	font-weight: bold;
+	font-size: 60px;
+}
+
+h3 {
+	text-align: left;
+	color: #fea9c0;
+	margin: 0;
+	margin-left: 150px;
+	font-weight: bold;
+	font-size: 36px;
+}
+
+.logo {
+	width: 50px;
+	height: auto;
+	margin-left: 90px;
+}
+
+.logo2, .logo3 {
+	width: 300px;
+	height: auto;
+	margin-left: 900px;
+}
+
+main {
+	background-color: #d9e5d6;
+	padding: 20px;
+}
+
+main p {
+	font-size: 20px;
+	color: #333;
+	margin-top: 20px;
+}
+
+header {
+	background-color: #ccdbc8;
+	padding: 20px;
+	justify-content: space-between;
+	display: flex;
+	align-items: center;
+}
+
+nav ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	text-align: center;
+	font-weight: bold;
+}
+
+nav ul li {
+	margin-right: 100px;
+}
+
+nav ul li:last-child {
+	margin-right: 50px;
+}
+
+nav ul li a {
+	text-decoration: none;
+	color: #3e4a5a;
+	font-size: 20px;
+}
+
+.dashboard-container {
+	width: 80%;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.owner-info, .pet-info {
+	background-color: #d9e5d6;
+	padding: 20px;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.owner-info h3 {
+	margin-left: 0;
+	color: #3e4a5a;
+}
+
+.pet-card {
+	background-color: #d9e5d6;
+	padding: 15px;
+	border-radius: 8px;
+	margin-bottom: 15px;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+	color: #3e4a5a;
+	margin-top: 0;
+	margin-left: 0px;
+	padding-bottom: 10px;
+}
+
+.info-label {
+	font-weight: bold;
+	color: #3e4a5a;
+}
+
+.logout-btn, .action-button, .btn, .edit-pet-btn, .toggle-form-btn {
+	background-color: #3e4a5a;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.logout-btn {
+	padding: 10px 20px;
+	float: right;
+}
+
+.action-button {
+	padding: 8px 16px;
+}
+
+.btn {
+	padding: 10px 20px;
+}
+
+.edit-pet-btn {
+	padding: 5px 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.toggle-form-btn {
+	padding: 8px 12px;
+}
+
+.logout-btn:hover, .action-button:hover, .btn:hover, .edit-pet-btn:hover,
+	.toggle-form-btn:hover {
+	background-color: #717883;
+}
+
+.logout-form, .form-container {
+	background-color: transparent;
+	padding: 0;
+	border-radius: 0;
+	box-shadow: none;
+	width: auto;
+	margin-left: 0;
+}
+
+.form-container {
+	margin-bottom: 15px;
+}
+
+.form-title {
+	color: #3e4a5a;
+	margin: 0;
+	margin-bottom: 15px;
+	font-weight: bold;
+	font-size: 24px;
+}
+
+.form-group {
+	margin-bottom: 15px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+	color: #3e4a5a;
+}
+
+.form-group input[type="text"], .form-group input[type="email"],
+	.form-group input[type="tel"] {
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+#update-animal-form, .form-section {
+	display: none;
+	margin-top: 15px;
+	padding: 10px;
+	background-color: transparent;
+	border-radius: 5px;
+}
+
+.remove-form>form-group {
+	display: none;
+	margin-top: 15px;
+	padding: 10px;
+	background-color: transparent;
+	border-radius: 5px;
+}
+
+.welcome-message {
+	text-align: center;
+	color: #3e4a5a;
+	margin: 0 0 30px 0;
+	font-weight: bold;
+	font-size: 36px;
+}
+
+.image-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 20px 0;
+	flex-wrap: wrap;
+}
+
+.image-container img {
+	margin: 10px;
+	max-width: 300px;
+	height: auto;
+}
+
+.logo2 {
+	margin-left: 40px;
+	margin-right: 40px;
+	display: inline-block;
+}
+
+.logo3 {
+	width: 300px !important;
+	height: auto !important;
+	margin-left: 40px;
+	display: inline-block;
+}
+
+.message {
+	padding: 10px;
+	margin-bottom: 15px;
+	border-radius: 4px;
+	background-color: #d4edda;
+	color: #3e4a5a;
+	border: 1px solid #c3e6cb;
+	font-weight: bold;
+}
+
+.action-buttons {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+footer {
+	background-color: #ccdbc8;
+	color: #000000;
+	text-align: center;
+	padding: 0, 5px 0;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+}
+
+@media ( max-width : 768px) {
+	.dashboard-container {
+		width: 95%;
+	}
+	.logo2, .logo3 {
+		width: 200px !important;
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+	.welcome-message {
+		font-size: 28px;
+	}
+	.owner-info h3 {
+		font-size: 24px;
+	}
+}
